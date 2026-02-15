@@ -31,3 +31,9 @@ Thumbs.db
 # Cache
 .cache/
 .astro/
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
