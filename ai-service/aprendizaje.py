@@ -313,4 +313,3 @@ async def analizarVideo(ejercicio: str, video: UploadFile = File(...), modo: str
 
 # http://127.0.0.1:8000
 #Docs: http://127.0.0.1:8000/docs
-# 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
