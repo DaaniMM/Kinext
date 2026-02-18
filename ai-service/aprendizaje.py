@@ -28,7 +28,11 @@ from prompts import PROMPTS_EJERCICIOS
 
 
 #En la variable app -> guarda la clase FastApi() --> new class()...
-app = FastAPI() 
+app = FastAPI(
+    title="formIA - Análisis Biomecánico IA",
+    version="1.0.0",
+    openapi_version="3.1.0"
+)
 
 app.add_middleware(  #añade a app la funcionalidad de: (lo de abajo)
     CORSMiddleware,     #usar la clase CORS
