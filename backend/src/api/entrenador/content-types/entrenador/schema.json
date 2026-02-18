@@ -1,0 +1,124 @@
+{
+  "kind": "collectionType",
+  "collectionName": "entrenadores",
+  "info": {
+    "singularName": "entrenador",
+    "pluralName": "entrenadores",
+    "displayName": "Entrenadores"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "nombre": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "foto_perfil": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "files",
+        "images"
+      ]
+    },
+    "bio": {
+      "type": "richtext",
+      "required": true
+    },
+    "especialidad": {
+      "type": "customField",
+      "customField": "plugin::multi-select.multi-select",
+      "default": "[]",
+      "options": [
+        "Fuerza",
+        "Movilidad",
+        "Pérdida de peso",
+        "Hipertrofia",
+        "Funcional",
+        "Rehabilitación"
+      ],
+      "required": true,
+      "min": 1,
+      "max": 3
+    },
+    "experiencia_anos": {
+      "type": "integer",
+      "required": true,
+      "min": 0,
+      "max": 50
+    },
+    "precio_sesion": {
+      "type": "decimal",
+      "required": true,
+      "min": 0
+    },
+    "ciudad": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": true
+    },
+    "telefono": {
+      "type": "string",
+      "maxLength": 15,
+      "required": true,
+      "unique": true
+    },
+    "certificaciones": {
+      "type": "richtext"
+    },
+    "modalidad": {
+      "type": "customField",
+      "customField": "plugin::multi-select.multi-select",
+      "default": "[]",
+      "options": [
+        "presencial",
+        "online"
+      ],
+      "required": true,
+      "min": 1,
+      "max": 2
+    },
+    "idiomas": {
+      "type": "customField",
+      "customField": "plugin::multi-select.multi-select",
+      "default": "[]",
+      "options": [
+        "Español",
+        "Inglés",
+        "Francés",
+        "Alemán",
+        "Catalán",
+        "Portugués",
+        "Ruso"
+      ],
+      "required": true,
+      "min": 1
+    },
+    "valoracion": {
+      "type": "decimal",
+      "default": 0,
+      "min": 0,
+      "max": 5
+    },
+    "num_resenas": {
+      "type": "integer",
+      "required": true,
+      "default": 0,
+      "min": 0
+    },
+    "resenas": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::resena.resena",
+      "mappedBy": "entrenador"
+    }
+  }
+}

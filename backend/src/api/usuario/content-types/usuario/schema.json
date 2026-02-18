@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "usuarios",
+  "info": {
+    "singularName": "usuario",
+    "pluralName": "usuarios",
+    "displayName": "Usuarios"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "analises": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::analisis.analisis",
+      "mappedBy": "usuario"
+    }
+  }
+}

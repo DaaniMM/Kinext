@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "resenas",
+  "info": {
+    "singularName": "resena",
+    "pluralName": "resenas",
+    "displayName": "Resenas"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "autor": {
+      "type": "string",
+      "required": true
+    },
+    "texto": {
+      "type": "text",
+      "required": true
+    },
+    "puntuacion": {
+      "type": "integer",
+      "required": true,
+      "min": 0,
+      "max": 5
+    },
+    "fecha": {
+      "type": "date",
+      "required": true
+    },
+    "entrenador": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::entrenador.entrenador",
+      "inversedBy": "resenas"
+    }
+  }
+}

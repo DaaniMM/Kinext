@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "analises",
+  "info": {
+    "singularName": "analisis",
+    "pluralName": "analises",
+    "displayName": "Analisis"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "ejercicio": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::ejercicio.ejercicio",
+      "inversedBy": "analises"
+    },
+    "usuario": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::usuario.usuario",
+      "inversedBy": "analises"
+    },
+    "video_usuario": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "files",
+        "videos"
+      ]
+    },
+    "resultado_ia": {
+      "type": "text",
+      "required": true
+    },
+    "puntuacion": {
+      "type": "decimal",
+      "required": true,
+      "min": 0,
+      "max": 10
+    },
+    "fecha": {
+      "type": "date",
+      "required": true
+    }
+  }
+}
