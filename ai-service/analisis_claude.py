@@ -29,14 +29,14 @@ from prompts import PROMPTS_EJERCICIOS
 
 #En la variable app -> guarda la clase FastApi() --> new class()...
 app = FastAPI(
-    title="formIA - Análisis Biomecánico IA",
+    title="KINEXT - Análisis Biomecánico IA",
     version="1.0.0",
     openapi_version="3.1.0"
 )
 
 app.add_middleware(  #añade a app la funcionalidad de: (lo de abajo)
     CORSMiddleware,     #usar la clase CORS
-    allow_origins=["*"],  #permite peticiones de cualquier dominio --> luego cambiaré a allow_origins=["https://formia.com"]
+    allow_origins=["*"],  #permite peticiones de cualquier dominio --> luego cambiaré a allow_origins=["https://kinext.com"]
     allow_credentials=True, #permite que el frontend envie - Cookies - Headers de autenticación - Sesiones (COOKIES)
     allow_methods=["*"],  #metodos permitidos: cualquiera
     allow_headers=["*"]  #acepta cualquier header http -> content-type , custom-header ....
@@ -228,7 +228,7 @@ def analizar_con_claude_real(imagenes_base64: list, ejercicio: str) -> str:
 def inicio():
     return{
         "status": "online",
-        "servicio": "formIA - Análisis Biomecánico IA",
+        "servicio": "KINEXT - Análisis Biomecánico IA",
         "version": "1.0.0" 
     }
 

@@ -32,7 +32,7 @@ app.add_middleware(
 # Verificar que el servidor responde correctamente
 @app.get("/")
 def home():
-    return {"status": "Servidor de formIA funcionando"}
+    return {"status": "Servidor de KINEXT funcionando"}
 
 #post -> analizar video
     #Eecibe como parametros: 

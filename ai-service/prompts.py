@@ -1,5 +1,5 @@
 """
-Prompts de análisis biomecánico - formIA
+Prompts de análisis biomecánico - KINEXT
 Diseñados para Gemini 2.5 Flash - Análisis de video completo
 Balance entre precisión técnica profesional y comprensión universal
 """
