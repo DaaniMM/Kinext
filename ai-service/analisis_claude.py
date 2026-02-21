@@ -310,10 +310,3 @@ async def analizarVideo(ejercicio: str, video: UploadFile = File(...), modo: str
 
 
 
-
-
-
-
-
-# http://127.0.0.1:8000
-#Docs: http://127.0.0.1:8000/docs
