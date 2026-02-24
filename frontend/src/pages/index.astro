@@ -4,10 +4,12 @@ import Layout from '../layouts/Layout.astro';
 // Fetch Testimonios
 const resTestimonios = await fetch('http://13.62.216.127:1337/api/testimonios?populate=*');
 const { data: testimonios } = await resTestimonios.json();
+const testimonios = dataTestimonios?.data || [];
 
 // Fetch FAQs Generales
 const resFaqs = await fetch('http://13.62.216.127:1337/api/faqs?filters[categoria][$eq]=general&populate=*');
 const { data: faqs } = await resFaqs.json();
+const faqs = dataFaqs?.data || [];
 
 // Fetch Últimos 3 Blogs
 const resBlogs = await fetch('http://13.62.216.127:1337/api/articulos?populate=*');
