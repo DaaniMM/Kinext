@@ -3,18 +3,18 @@ import Layout from '../layouts/Layout.astro';
 
 // Fetch Testimonios
 const resTestimonios = await fetch('http://13.62.216.127:1337/api/testimonios?populate=*');
-const { data: testimonios } = await resTestimonios.json();
+const dataTestimonios = await resTestimonios.json();
 const testimonios = dataTestimonios?.data || [];
 
-// Fetch FAQs Generales
+// Fetch FAQs
 const resFaqs = await fetch('http://13.62.216.127:1337/api/faqs?filters[categoria][$eq]=general&populate=*');
-const { data: faqs } = await resFaqs.json();
+const dataFaqs = await resFaqs.json();
 const faqs = dataFaqs?.data || [];
 
-// Fetch Últimos 3 Blogs
-const resBlogs = await fetch('http://13.62.216.127:1337/api/articulos?populate=*');
+// Fetch Blogs
+const resBlogs = await fetch('http://13.62.216.127:1337/api/articulos?populate=*&sort=publishedAt:desc&pagination[limit]=3');
 const dataBlogs = await resBlogs.json();
-const blogs = dataBlogs.data || [];
+const blogs = dataBlogs?.data || [];
 ---
 
 
@@ -211,28 +211,34 @@ const blogs = dataBlogs.data || [];
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {testimonios.map(t => (
-        <div class="glass-surface rounded-2xl p-8">
-          <div class="flex items-center gap-1 mb-4">
-            <span class="text-yellow-400">★★★★★</span>
-          </div>
-          <p class="text-gray-300 mb-6 leading-relaxed">
-            "{t.texto}"
+  {blogs && blogs.length > 0 ? (
+    blogs.map(blog => (
+      <article class="glass-surface rounded-2xl overflow-hidden hover:scale-105 transition-transform">
+        {blog.imagen_portada?.url && (
+          <img
+            src={`http://13.62.216.127:1337${blog.imagen_portada.url}`}
+            alt={blog.titulo}
+            class="h-48 w-full object-cover"
+          />
+        )}
+        <div class="p-6">
+          <span class="text-xs text-gray-400">
+            {new Date(blog.publishedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
+          </span>
+          <h3 class="text-xl font-bold mt-2 mb-3">{blog.titulo}</h3>
+          <p class="text-gray-400 text-sm mb-4">
+            {blog.extracto}
           </p>
-          <div class="flex items-center gap-3">
-            <img 
-              src={`http://13.62.216.127:1337${t.autor_avatar.url}`} 
-              alt={t.autor_nombre} 
-              class="w-12 h-12 rounded-full object-cover"
-            />
-            <div>
-              <p class="font-semibold">{t.autor_nombre}</p>
-              <p class="text-sm text-gray-400">{t.autor_rol}</p>
-            </div>
-          </div>
+          <a href={`/blog/${blog.slug}`} class="text-sm font-semibold gradient-text">
+            Leer más →
+          </a>
         </div>
-      ))}
-    </div>
+      </article>
+    ))
+  ) : (
+    <p class="text-gray-400 col-span-3 text-center">No hay artículos disponibles</p>
+  )}
+</div>
 
   </div>
 </section>
@@ -380,12 +386,8 @@ const blogs = dataBlogs.data || [];
   {blogs && blogs.length > 0 ? (
     blogs.map(blog => (
       <article class="glass-surface rounded-2xl overflow-hidden hover:scale-105 transition-transform">
-        {blog.imagen_destacada?.url && (
-          <img 
-            src={`http://13.62.216.127:1337${blog.imagen_destacada.url}`} 
-            alt={blog.titulo}
-            class="h-48 w-full object-cover"
-          />
+        {blog.imagen_portada?.url && (
+          <img src={`http://13.62.216.127:1337${blog.imagen_portada.url}`} alt={blog.titulo} class="h-48 w-full object-cover"/>
         )}
         <div class="p-6">
           <span class="text-xs text-gray-400">
