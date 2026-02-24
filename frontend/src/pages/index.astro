@@ -1,17 +1,495 @@
 ---
+import Layout from '../layouts/Layout.astro';
 
+// Fetch Testimonios
+const resTestimonios = await fetch('http://13.62.216.127:1337/api/testimonios?populate=*');
+const { data: testimonios } = await resTestimonios.json();
+
+// Fetch FAQs Generales
+const resFaqs = await fetch('http://13.62.216.127:1337/api/faqs?filters[categoria][$eq]=general&populate=*');
+const { data: faqs } = await resFaqs.json();
+
+// Fetch Últimos 3 Blogs
+const resBlogs = await fetch('http://13.62.216.127:1337/api/articulos?populate=*');
+const dataBlogs = await resBlogs.json();
+const blogs = dataBlogs.data || [];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+
+<Layout title="KINEXT - Home">
+  
+  <!-- ========================================== -->
+  <!-- SECTION 1: HERO                            -->
+  <!-- ========================================== -->
+  <section class="min-h-screen flex items-center justify-center px-6 pt-20">
+    <div class="max-w-6xl mx-auto text-center">
+      
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-surface mb-8">
+        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+        <span class="text-xs text-gray-400">Marketplace Online</span>
+      </div>
+
+      <h1 class="text-6xl md:text-8xl font-black tracking-tight mb-6 title-main">
+        <span class="gradient-text">KINEXT</span>
+      </h1>
+
+      <p class="text-xl text-gray-400 max-w-3xl mx-auto mb-12">
+        Conecta con los mejores profesionales del fitness.<br>
+        <span style="color: var(--color-primary)">Análisis biomecánico IA</span> + 
+        <span style="color: var(--color-secondary)">Tracking avanzado</span>
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+        <a href="/marketplace" class="hero-btn px-8 py-4 rounded-lg bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white font-bold hover:scale-105 transition-transform">
+          Explorar Entrenadores
+        </a>
+        <a href="/analizar" class="hero-btn px-8 py-4 rounded-lg glass-surface text-white font-semibold hover:bg-white/10 transition">
+          Ver Demo IA
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="flex flex-wrap justify-center gap-12">
+        <div>
+          <div class="text-4xl font-bold stat gradient-text">247</div>
+          <div class="text-sm text-gray-500 mt-1">Entrenadores</div>
+        </div>
+        <div>
+          <div class="text-4xl font-bold stat gradient-text">32</div>
+          <div class="text-sm text-gray-500 mt-1">Ciudades</div>
+        </div>
+        <div>
+          <div class="text-4xl font-bold stat text-white">1.8K</div>
+          <div class="text-sm text-gray-500 mt-1">Sesiones</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 2: CARACTERÍSTICAS                 -->
+  <!-- ========================================== -->
+  <section class="py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+      
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold mb-4">
+          ¿Por qué <span class="gradient-text">KINEXT</span>?
+        </h2>
+        <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+          La plataforma más avanzada para mejorar tu técnica y conectar con profesionales
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        
+        <!-- Feature 1 -->
+        <div class="glass-surface rounded-2xl p-8 hover:bg-white/10 transition-all">
+          <img src="/images/icono_AIbrain.png" alt="IA" class="w-16 h-16 mb-6" />
+          <h3 class="text-xl font-bold mb-3">Análisis IA</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            Gemini analiza tu técnica en tiempo real y te da feedback personalizado basado en biomecánica avanzada.
+          </p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="glass-surface rounded-2xl p-8 hover:bg-white/10 transition-all">
+          <img src="/images/icono_Dumbell.png" alt="Marketplace" class="w-16 h-16 mb-6" />
+          <h3 class="text-xl font-bold mb-3">Marketplace</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            +247 entrenadores verificados en 32 ciudades. Encuentra el profesional perfecto para tus objetivos.
+          </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="glass-surface rounded-2xl p-8 hover:bg-white/10 transition-all">
+          <img src="/images/icono_Chart.png" alt="Tracking" class="w-16 h-16 mb-6" />
+          <h3 class="text-xl font-bold mb-3">Tracking Avanzado</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            Registra tus entrenamientos, progreso y métricas. Visualiza tu evolución con gráficas detalladas.
+          </p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="glass-surface rounded-2xl p-8 hover:bg-white/10 transition-all">
+		<img src="/images/icono_bodyPose.png" alt="MediaPipe" class="w-16 h-16 mb-6" />
+          <h3 class="text-xl font-bold mb-3">MediaPipe 33 Puntos</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            Detección precisa de 33 puntos articulares para análisis biomecánico completo de cada movimiento.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 3: CÓMO FUNCIONA                   -->
+  <!-- ========================================== -->
+  <section class="py-24 px-6 bg-white/5">
+    <div class="max-w-6xl mx-auto">
+      
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold mb-4">
+          Mejora tu técnica en <span class="gradient-text">3 pasos</span>
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+        
+        <!-- Paso 1 -->
+        <div class="text-center">
+          <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] flex items-center justify-center mx-auto mb-6 text-3xl font-bold">
+            1
+          </div>
+          <h3 class="text-2xl font-bold mb-4">Graba tu ejercicio</h3>
+          <p class="text-gray-400 leading-relaxed">
+            Sube un video de tu sentadilla, peso muerto o press banca desde cualquier ángulo.
+          </p>
+        </div>
+
+        <!-- Paso 2 -->
+        <div class="text-center">
+          <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] flex items-center justify-center mx-auto mb-6 text-3xl font-bold">
+            2
+          </div>
+          <h3 class="text-2xl font-bold mb-4">IA analiza tu técnica</h3>
+          <p class="text-gray-400 leading-relaxed">
+            MediaPipe detecta 33 puntos articulares y Gemini evalúa ángulos, profundidad y postura.
+          </p>
+        </div>
+
+        <!-- Paso 3 -->
+        <div class="text-center">
+          <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] flex items-center justify-center mx-auto mb-6 text-3xl font-bold">
+            3
+          </div>
+          <h3 class="text-2xl font-bold mb-4">Recibe feedback</h3>
+          <p class="text-gray-400 leading-relaxed">
+            Obtén análisis detallado con overlay visual de puntos y recomendaciones específicas.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 4: DEMO VISUAL                     -->
+  <!-- ========================================== -->
+  <section class="py-24 px-6">
+    <div class="max-w-5xl mx-auto text-center">
+      
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">
+        MediaPipe en <span class="gradient-text">acción</span>
+      </h2>
+      <p class="text-gray-400 text-lg mb-12 max-w-2xl mx-auto">
+        Visualiza cómo detectamos cada punto articular para análisis preciso
+      </p>
+
+      <!-- Placeholder demo image -->
+      <div class="glass-surface rounded-3xl p-12 border-2 border-white/10">
+        <img src="/images/mediapipe-demo.png" alt="MediaPipe Demo" class="w-full rounded-2xl" />
+      </div>
+
+    </div>
+  </section>
+
+<!-- ========================================== -->
+<!-- SECTION 5: TESTIMONIOS                     -->
+<!-- ========================================== -->
+<section class="py-24 px-6 bg-white/5">
+  <div class="max-w-7xl mx-auto">
+    
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold mb-4">
+        Lo que dicen nuestros <span class="gradient-text">usuarios</span>
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {testimonios.map(t => (
+        <div class="glass-surface rounded-2xl p-8">
+          <div class="flex items-center gap-1 mb-4">
+            <span class="text-yellow-400">★★★★★</span>
+          </div>
+          <p class="text-gray-300 mb-6 leading-relaxed">
+            "{t.texto}"
+          </p>
+          <div class="flex items-center gap-3">
+            <img 
+              src={`http://13.62.216.127:1337${t.autor_avatar.url}`} 
+              alt={t.autor_nombre} 
+              class="w-12 h-12 rounded-full object-cover"
+            />
+            <div>
+              <p class="font-semibold">{t.autor_nombre}</p>
+              <p class="text-sm text-gray-400">{t.autor_rol}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+  
+  <!-- ========================================== -->
+<!-- SECTION 6: FAQs                            -->
+<!-- ========================================== -->
+<section class="py-24 px-6">
+  <div class="max-w-4xl mx-auto">
+    
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold mb-4">
+        Preguntas <span class="gradient-text">frecuentes</span>
+      </h2>
+    </div>
+
+    <div class="space-y-4">
+      {faqs.map(faq => (
+        <details class="glass-surface rounded-xl p-6 group">
+          <summary class="font-semibold cursor-pointer list-none flex justify-between items-center">
+            {faq.pregunta}
+            <span class="text-2xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="text-gray-300 mt-4 leading-relaxed whitespace-pre-line">
+  {faq.respuesta}
+</p>
+        </details>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<!-- ========================================== -->
+  <!-- SECTION 7: PLANES PREVIEW                  -->
+  <!-- ========================================== -->
+  <section class="py-24 px-6 bg-white/5">
+    <div class="max-w-7xl mx-auto">
+      
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold mb-4">
+          Elige tu <span class="gradient-text">plan</span>
+        </h2>
+        <p class="text-gray-400 text-lg">Empieza gratis, actualiza cuando quieras</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Plan FREE -->
+        <div class="glass-surface rounded-2xl p-8 border-2 border-white/10">
+          <h3 class="text-2xl font-bold mb-2">Free</h3>
+          <div class="text-4xl font-bold mb-6">0€<span class="text-lg text-gray-400">/mes</span></div>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start gap-2">
+              <span class="text-green-400">✓</span>
+              <span class="text-gray-300">3 análisis IA/mes</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-400">✓</span>
+              <span class="text-gray-300">Marketplace completo</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-400">✓</span>
+              <span class="text-gray-300">Tracking básico</span>
+            </li>
+          </ul>
+          <a href="/planes" class="block text-center px-6 py-3 rounded-lg border-2 border-white/20 font-semibold hover:bg-white/10 transition">
+            Ver detalles
+          </a>
+        </div>
+
+        <!-- Plan PREMIUM -->
+        <div class="glass-surface rounded-2xl p-8 border-2 border-[var(--color-primary)] relative">
+          <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-sm font-bold">
+            Popular
+          </div>
+          <h3 class="text-2xl font-bold mb-2">Premium</h3>
+          <div class="text-4xl font-bold mb-6">9.99€<span class="text-lg text-gray-400">/mes</span></div>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start gap-2">
+              <span class="text-green-400">✓</span>
+              <span class="text-gray-300">Análisis IA ilimitados</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-400">✓</span>
+              <span class="text-gray-300">Tracking avanzado</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-400">✓</span>
+              <span class="text-gray-300">Blog premium</span>
+            </li>
+          </ul>
+          <a href="/planes" class="block text-center px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] font-bold hover:scale-105 transition-transform">
+            Empezar
+          </a>
+        </div>
+
+        <!-- Plan PRO -->
+        <div class="glass-surface rounded-2xl p-8 border-2 border-white/10">
+          <h3 class="text-2xl font-bold mb-2">Pro</h3>
+          <div class="text-4xl font-bold mb-6">19.99€<span class="text-lg text-gray-400">/mes</span></div>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start gap-2">
+              <span class="text-green-400">✓</span>
+              <span class="text-gray-300">Todo Premium +</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-400">✓</span>
+              <span class="text-gray-300">MediaPipe overlay visual</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-400">✓</span>
+              <span class="text-gray-300">Análisis 3D cuantitativo</span>
+            </li>
+          </ul>
+          <a href="/planes" class="block text-center px-6 py-3 rounded-lg border-2 border-white/20 font-semibold hover:bg-white/10 transition">
+            Ver detalles
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 8: BLOG PREVIEW                    -->
+  <!-- ========================================== -->
+  <section class="py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+      
+      <div class="flex justify-between items-end mb-12">
+        <div>
+          <h2 class="text-4xl md:text-5xl font-bold mb-2">
+            Últimos <span class="gradient-text">artículos</span>
+          </h2>
+          <p class="text-gray-400">Aprende sobre técnica, nutrición y entrenamiento</p>
+        </div>
+        <a href="/blog" class="hidden md:block px-6 py-3 rounded-lg glass-surface font-semibold hover:bg-white/10 transition">
+          Ver todos →
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+  {blogs && blogs.length > 0 ? (
+    blogs.map(blog => (
+      <article class="glass-surface rounded-2xl overflow-hidden hover:scale-105 transition-transform">
+        {blog.imagen_destacada?.url && (
+          <img 
+            src={`http://13.62.216.127:1337${blog.imagen_destacada.url}`} 
+            alt={blog.titulo}
+            class="h-48 w-full object-cover"
+          />
+        )}
+        <div class="p-6">
+          <span class="text-xs text-gray-400">
+            {new Date(blog.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })} • {blog.tiempo_lectura} min
+          </span>
+          <h3 class="text-xl font-bold mt-2 mb-3">{blog.titulo}</h3>
+          <p class="text-gray-400 text-sm mb-4">
+            {blog.extracto}
+          </p>
+          <a href={`/blog/${blog.slug}`} class="text-sm font-semibold gradient-text">
+            Leer más →
+          </a>
+        </div>
+      </article>
+    ))
+  ) : (
+    <p class="text-gray-400 col-span-3 text-center">No hay artículos disponibles</p>
+  )}
+</div>
+
+      <a href="/blog" class="md:hidden block text-center mt-8 px-6 py-3 rounded-lg glass-surface font-semibold">
+        Ver todos los artículos →
+      </a>
+
+    </div>
+  </section>
+
+</Layout>
+
+
+
+//ANIMACIONES CON GSAP
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  
+  gsap.registerPlugin(ScrollTrigger);
+
+  // ==========================================
+  // 1. HERO - ZOOM OUT DRAMÁTICO + GRADIENT ANIMADO
+  // ==========================================
+  const heroTimeline = gsap.timeline();
+  
+  heroTimeline
+    .from('h1', {
+      scale: 3,
+      opacity: 0,
+      duration: 1.2,
+      ease: 'power3.out'
+    })
+    .from('.text-xl.text-gray-400', {
+      y: 30,
+      opacity: 0,
+      duration: 0.8
+    }, '-=0.4')
+    .from('.hero-btn', {
+      y: 20,
+      opacity: 0,
+      duration: 0.6,
+      stagger: 0.1,
+	  clearProps: "all"
+    }, '-=0.3');
+
+  // Gradiente animado "Entrenador"
+  gsap.to('.gradient-text', {
+  backgroundPosition: '300% center',
+  duration: 10,
+  repeat: -1,
+  ease: 'none',
+});
+
+  // ==========================================
+  // 2. STATS - CONTADOR ANIMADO
+  // ==========================================
+  function animateCounter(element, target) {
+    gsap.to(element, {
+      innerText: target,
+      duration: 2,
+      delay: 1.5,
+      snap: { innerText: 1 },
+      onUpdate: function() {
+        if (target >= 1000) {
+          element.textContent = (this.targets()[0].innerText / 1000).toFixed(1) + 'K';
+        } else {
+          element.textContent = Math.floor(this.targets()[0].innerText);
+        }
+      }
+    });
+  }
+
+  const stats = document.querySelectorAll('.stat');
+  animateCounter(stats[0], 247);
+  animateCounter(stats[1], 32);
+  animateCounter(stats[2], 1800);
+
+    // ==========================================
+  // 4. PLANES - PREMIUM POP
+  // ==========================================
+  gsap.from('.border-\\[var\\(--color-primary\\)\\]', {
+    scrollTrigger: {
+      trigger: '.border-\\[var\\(--color-primary\\)\\]',
+      start: 'top 80%'
+    },
+    scale: 0.9,
+    duration: 1,
+    ease: 'back.out(5)'
+  });
+</script>
