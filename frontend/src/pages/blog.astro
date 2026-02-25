@@ -1,0 +1,224 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const resBlogs = await fetch('http://13.62.216.127:1337/api/articulos?populate=*&sort=publishedAt:desc&pagination[limit]=100');
+const dataBlogs = await resBlogs.json();
+const blogs = dataBlogs?.data || [];
+
+// Extraer categorías únicas
+const todasCategorias = ['Todos', ...new Set(blogs.flatMap((b: any) => b.categoria || []))];
+---
+
+<Layout title="KINEXT - Blog">
+
+  <!-- HERO -->
+  <section class="min-h-screen flex items-center justify-center px-6 pt-24 pb-12 text-center relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-[var(--color-primary)]/5 to-transparent pointer-events-none"></div>
+    <div class="max-w-3xl mx-auto relative z-10">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-surface mb-6">
+        <span class="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
+        <span class="text-xs text-gray-400">{blogs.length} artículos publicados</span>
+      </div>
+      <h1 class="text-6xl md:text-7xl font-black tracking-tight mb-6">
+        Blog <span class="gradient-text">KINEXT</span>
+      </h1>
+      <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+        Técnica, biomecánica y ciencia del entrenamiento.<br>
+        Todo lo que necesitas para entrenar mejor.
+      </p>
+    </div>
+  </section>
+
+  <!-- FILTROS -->
+  <section class="px-6 pb-8 sticky top-16 z-20 bg-[#0a0a0a]/90 backdrop-blur-md py-4 border-b border-white/5">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-wrap gap-3 justify-center">
+        {todasCategorias.map((cat: string) => (
+          <button
+            class="filtro-btn px-5 py-2 rounded-full text-sm font-semibold transition-all border border-white/10 text-gray-400 hover:text-white hover:border-white/30"
+            data-categoria={cat}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- GRID BLOGS -->
+  <section class="py-16 px-6">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Contador resultados -->
+      <div class="mb-8 text-gray-500 text-sm">
+        <span id="contadorResultados">{blogs.length}</span> artículos
+      </div>
+
+      <div id="gridBlogs" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {blogs.map((blog: any) => (
+          <article
+            class="blog-card glass-surface rounded-2xl overflow-hidden hover:scale-[1.02] transition-all duration-300 flex flex-col group"
+            data-categorias={JSON.stringify(blog.categoria || [])}
+          >
+            {blog.imagen_portada?.url ? (
+              <div class="relative overflow-hidden h-52">
+                <img
+                  src={`http://13.62.216.127:1337${blog.imagen_portada.url}`}
+                  alt={blog.titulo}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div class="absolute bottom-3 left-3 flex flex-wrap gap-1">
+                  {(blog.categoria || []).map((cat: string) => (
+                    <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-[var(--color-primary)]/80 text-white backdrop-blur-sm">
+                      {cat}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div class="h-52 bg-gradient-to-br from-[var(--color-primary)]/20 to-[var(--color-secondary)]/20 flex items-center justify-center">
+                <span class="text-4xl">📝</span>
+              </div>
+            )}
+
+            <div class="p-6 flex flex-col flex-1">
+              <div class="flex items-center gap-2 text-xs text-gray-500 mb-3">
+                <span>{blog.autor}</span>
+                <span>·</span>
+                <span>{new Date(blog.publishedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+              </div>
+              <h2 class="text-lg font-bold mb-3 leading-snug group-hover:text-[var(--color-primary)] transition-colors line-clamp-2">
+                {blog.titulo}
+              </h2>
+              <p class="text-gray-400 text-sm leading-relaxed flex-1 line-clamp-3 mb-4">
+                {blog.extracto}
+              </p>
+              <a href={`/blog/${blog.slug}`} class="inline-flex items-center gap-2 text-sm font-semibold gradient-text hover:gap-3 transition-all">
+                Leer artículo <span>→</span>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <!-- Botón mostrar más -->
+      <div id="wrapperMostrarMas" class="text-center mt-12">
+        <button id="btnMostrarMas" class="px-10 py-4 rounded-lg glass-surface font-semibold text-lg hover:bg-white/10 transition border border-white/10">
+          Mostrar más artículos
+        </button>
+      </div>
+
+      <!-- Sin resultados -->
+      <div id="sinResultados" class="hidden text-center py-24">
+        <div class="text-5xl mb-4">🔍</div>
+        <p class="text-gray-400 text-lg">No hay artículos en esta categoría todavía.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-24 px-6 bg-white/5">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-4xl md:text-5xl font-black mb-6">
+        ¿Listo para <span class="gradient-text">mejorar</span>?
+      </h2>
+      <p class="text-xl text-gray-400 mb-10">
+        Aplica lo que aprendes con análisis IA de tu técnica en tiempo real.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/login" class="px-10 py-4 rounded-lg bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white font-bold text-lg hover:scale-105 transition-transform">
+          Unirse a KINEXT
+        </a>
+        <a href="/analizar" class="px-10 py-4 rounded-lg glass-surface font-semibold text-lg hover:bg-white/10 transition">
+          Probar análisis IA
+        </a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .filtro-btn.activo {
+    background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+    border-color: transparent;
+    color: white;
+  }
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .blog-card.oculto {
+    display: none;
+  }
+</style>
+
+<script>
+  const botones = document.querySelectorAll('.filtro-btn');
+  const cards = Array.from(document.querySelectorAll('.blog-card')) as HTMLElement[];
+  const contador = document.getElementById('contadorResultados');
+  const sinResultados = document.getElementById('sinResultados');
+  const btnMostrarMas = document.getElementById('btnMostrarMas');
+  const wrapperMostrarMas = document.getElementById('wrapperMostrarMas');
+
+  const POR_PAGINA = 3;
+  let categoriaActiva = 'Todos';
+  let visiblesActuales: HTMLElement[] = [];
+  let mostrados = 0;
+
+  botones[0]?.classList.add('activo');
+
+  function filtrar(categoria: string) {
+    categoriaActiva = categoria;
+    mostrados = 0;
+
+    visiblesActuales = cards.filter(card => {
+      const categorias = JSON.parse(card.getAttribute('data-categorias') || '[]');
+      return categoria === 'Todos' || categorias.includes(categoria);
+    });
+
+    // Ocultar todas primero
+    cards.forEach(c => c.classList.add('oculto'));
+
+    // Mostrar las primeras POR_PAGINA
+    mostrar();
+
+    if (contador) contador.textContent = String(visiblesActuales.length);
+    if (sinResultados) sinResultados.classList.toggle('hidden', visiblesActuales.length > 0);
+  }
+
+  function mostrar() {
+    const siguiente = visiblesActuales.slice(mostrados, mostrados + POR_PAGINA);
+    siguiente.forEach(c => c.classList.remove('oculto'));
+    mostrados += siguiente.length;
+
+    // Ocultar botón si ya se mostraron todos
+    if (wrapperMostrarMas) {
+      wrapperMostrarMas.classList.toggle('hidden', mostrados >= visiblesActuales.length);
+    }
+  }
+
+  btnMostrarMas?.addEventListener('click', mostrar);
+
+  botones.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      botones.forEach(b => b.classList.remove('activo'));
+      btn.classList.add('activo');
+      const cat = btn.getAttribute('data-categoria') || 'Todos';
+      filtrar(cat);
+    });
+  });
+
+  // Inicializar
+  filtrar('Todos');
+</script>
