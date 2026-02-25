@@ -1,0 +1,1 @@
+{"kind":"collectionType","collectionName":"faqs","info":{"singularName":"faq","pluralName":"faqs","displayName":"Faq"},"options":{"draftAndPublish":true},"attributes":{"pregunta":{"type":"string"},"respuesta":{"type":"text"},"categoria":{"type":"string"},"orden":{"type":"integer"},"destacada":{"type":"boolean"}}}

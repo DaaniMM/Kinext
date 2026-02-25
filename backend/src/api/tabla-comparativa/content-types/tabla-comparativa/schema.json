@@ -1,0 +1,1 @@
+{"kind":"collectionType","collectionName":"tabla_comparativas","info":{"singularName":"tabla-comparativa","pluralName":"tabla-comparativas","displayName":"TablaComparativa"},"options":{"draftAndPublish":true},"attributes":{"feature":{"type":"string"},"free":{"type":"boolean"},"premium":{"type":"boolean"},"pro":{"type":"boolean"},"orden":{"type":"integer"}}}
