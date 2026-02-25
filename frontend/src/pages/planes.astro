@@ -1,0 +1,232 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const resPlanes = await fetch('http://13.62.216.127:1337/api/plans?populate=*&sort=orden:asc');
+const dataPlanes = await resPlanes.json();
+const planes = dataPlanes?.data || [];
+
+const resTabla = await fetch('http://13.62.216.127:1337/api/tabla-comparativas?sort=orden:asc');
+const dataTabla = await resTabla.json();
+const tablaFilas = dataTabla?.data || [];
+
+const resFaqs = await fetch('http://13.62.216.127:1337/api/faqs?filters[categoria][$eq]=precios&populate=*');
+const dataFaqs = await resFaqs.json();
+const faqs = dataFaqs?.data || [];
+---
+
+<Layout title="KINEXT - Planes">
+
+  <!-- HERO -->
+  <section class="min-h-[50vh] flex items-center justify-center px-6 pt-24 pb-12 text-center">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-6xl md:text-8xl font-black tracking-tight mb-6">
+        Elige tu <span class="gradient-text">Plan</span>
+      </h1>
+      <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
+        Empieza gratis y escala cuando estés listo. Sin permanencias, cancela cuando quieras.
+      </p>
+      <!-- Toggle mensual/anual -->
+      <div class="inline-flex items-center gap-4 glass-surface rounded-full px-6 py-3">
+        <span id="labelMensual" class="font-semibold text-white">Mensual</span>
+        <button id="togglePago" class="w-12 h-6 rounded-full bg-white/20 relative transition-colors">
+          <span id="toggleDot" class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-all"></span>
+        </button>
+        <span id="labelAnual" class="font-semibold text-gray-400">Anual <span class="text-green-400 text-sm">-17%</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARDS PLANES -->
+  <section class="py-12 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {planes.map((plan: any) => (
+          <div class={`glass-surface rounded-2xl p-8 border-2 relative flex flex-col ${plan.destacado ? 'border-[var(--color-primary)]' : 'border-white/10'}`}>
+            
+            {plan.destacado && (
+              <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-sm font-bold whitespace-nowrap">
+                ⭐ Más Popular
+              </div>
+            )}
+
+            <div class="mb-6">
+              <h3 class="text-2xl font-bold mb-1">{plan.nombre}</h3>
+              <p class="text-gray-400 text-sm">{plan.descripcion_corta}</p>
+            </div>
+
+            <div class="mb-6">
+              <div class="precio-mensual">
+                <span class="text-5xl font-black">{plan.precio_mensual === 0 ? '0' : plan.precio_mensual}€</span>
+                <span class="text-gray-400">/mes</span>
+              </div>
+              <div class="precio-anual hidden">
+                <span class="text-5xl font-black">{plan.precio_anual === 0 ? '0' : (plan.precio_anual / 12).toFixed(2)}€</span>
+                <span class="text-gray-400">/mes</span>
+                {plan.precio_anual > 0 && (
+                  <div class="text-green-400 text-sm mt-1">{plan.precio_anual}€/año · ahorras {Math.round(plan.precio_mensual * 12 - plan.precio_anual)}€</div>
+                )}
+              </div>
+            </div>
+
+            <ul class="space-y-3 mb-8 flex-1">
+              {plan.caracteristica?.map((c: any) => (
+                <li class="flex items-start gap-3">
+                  <span class="text-green-400 mt-0.5 flex-shrink-0">✓</span>
+                  <span class="text-gray-300 text-sm">{c.texto}</span>
+                </li>
+              ))}
+            </ul>
+
+            <a 
+              href="/login" 
+              class={`block text-center px-6 py-4 rounded-lg font-bold transition ${plan.destacado ? 'bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] hover:scale-105 transform' : 'border-2 border-white/20 hover:bg-white/10'}`}
+            >
+              {plan.precio_mensual === 0 ? 'Empezar gratis' : 'Empezar ahora'}
+            </a>
+
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- TABLA COMPARATIVA -->
+  <!-- TABLA COMPARATIVA -->
+<section class="py-24 px-6">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold mb-4">Comparativa <span class="gradient-text">completa</span></h2>
+      <p class="text-gray-400">Todo lo que incluye cada plan</p>
+    </div>
+
+    <div class="glass-surface rounded-2xl overflow-hidden">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-white/10">
+            <th class="text-left p-6 font-semibold w-1/2">Característica</th>
+            <th class="p-6 text-center font-bold">Free</th>
+            <th class="p-6 text-center font-bold text-[var(--color-primary)]">Premium</th>
+            <th class="p-6 text-center font-bold">Pro</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tablaFilas.map((row: any, i: number) => (
+            <tr class={`border-b border-white/5 ${i % 2 === 0 ? 'bg-white/[0.02]' : ''}`}>
+              <td class="p-4 pl-6 text-sm">{row.feature}</td>
+              <td class="p-4 text-center">
+                {row.free ? <span class="text-green-400 text-lg">✓</span> : <span class="text-lg">—</span>}
+              </td>
+              <td class="p-4 text-center bg-[var(--color-primary)]/5">
+                {row.premium ? <span class="text-green-400 text-lg">✓</span> : <span class="text-lg">—</span>}
+              </td>
+              <td class="p-4 text-center">
+                {row.pro ? <span class="text-green-400 text-lg">✓</span> : <span class="text-lg">—</span>}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+  <!-- FAQs PRECIOS -->
+  <section class="py-24 px-6 bg-white/5">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl font-bold mb-4">Preguntas <span class="gradient-text">frecuentes</span></h2>
+      </div>
+
+      {faqs.length > 0 ? (
+        <div class="space-y-4">
+          {faqs.map((faq: any) => (
+            <details class="glass-surface rounded-xl p-6 group">
+              <summary class="font-semibold cursor-pointer list-none flex justify-between items-center">
+                {faq.pregunta}
+                <span class="text-2xl group-open:rotate-45 transition-transform">+</span>
+              </summary>
+                <p class="text-gray-300 mt-4 leading-relaxed whitespace-pre-line">{faq.respuesta}</p>
+            </details>
+          ))}
+        </div>
+      ) : (
+        <div class="space-y-4">
+          {[
+            { q: '¿Puedo cambiar de plan en cualquier momento?', r: 'Sí, puedes actualizar o bajar de plan cuando quieras. Los cambios se aplican en el siguiente ciclo de facturación.' },
+            { q: '¿Hay permanencia o contrato?', r: 'No hay ninguna permanencia. Puedes cancelar tu suscripción en cualquier momento desde tu perfil.' },
+            { q: '¿Qué métodos de pago aceptáis?', r: 'Aceptamos tarjetas de crédito/débito Visa, Mastercard y American Express, así como PayPal.' },
+            { q: '¿El plan Free es realmente gratis para siempre?', r: 'Sí, el plan Free es completamente gratuito y sin límite de tiempo. Incluye acceso al marketplace y funcionalidades básicas.' },
+            { q: '¿Cómo funciona el precio anual?', r: 'Con el plan anual pagas por adelantado 12 meses y obtienes un descuento del 17% respecto al precio mensual.' },
+          ].map(faq => (
+            <details class="glass-surface rounded-xl p-6 group">
+              <summary class="font-semibold cursor-pointer list-none flex justify-between items-center">
+                {faq.q}
+                <span class="text-2xl group-open:rotate-45 transition-transform">+</span>
+              </summary>
+              <p class="text-gray-300 mt-4 leading-relaxed">{faq.r}</p>
+            </details>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="py-24 px-6">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-4xl md:text-5xl font-black mb-6">
+        Empieza hoy, <span class="gradient-text">gratis</span>
+      </h2>
+      <p class="text-xl text-gray-400 mb-10">
+        Sin tarjeta de crédito. Sin permanencia. Cancela cuando quieras.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/login" class="px-10 py-4 rounded-lg bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white font-bold text-lg hover:scale-105 transition-transform">
+          Crear cuenta gratis
+        </a>
+        <a href="/marketplace" class="px-10 py-4 rounded-lg glass-surface font-semibold text-lg hover:bg-white/10 transition">
+          Ver entrenadores
+        </a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<script>
+  const toggle = document.getElementById('togglePago');
+  const dot = document.getElementById('toggleDot');
+  const labelMensual = document.getElementById('labelMensual');
+  const labelAnual = document.getElementById('labelAnual');
+  const preciosMensuales = document.querySelectorAll('.precio-mensual');
+  const preciosAnuales = document.querySelectorAll('.precio-anual');
+
+  let esAnual = false;
+
+  toggle?.addEventListener('click', () => {
+    esAnual = !esAnual;
+
+    if (esAnual) {
+      dot?.classList.add('left-7');
+      dot?.classList.remove('left-1');
+      toggle?.classList.add('bg-[var(--color-primary)]');
+      toggle?.classList.remove('bg-white/20');
+      labelMensual?.classList.add('text-gray-400');
+      labelMensual?.classList.remove('text-white');
+      labelAnual?.classList.add('text-white');
+      labelAnual?.classList.remove('text-gray-400');
+      preciosMensuales.forEach(el => el.classList.add('hidden'));
+      preciosAnuales.forEach(el => el.classList.remove('hidden'));
+    } else {
+      dot?.classList.remove('left-7');
+      dot?.classList.add('left-1');
+      toggle?.classList.remove('bg-[var(--color-primary)]');
+      toggle?.classList.add('bg-white/20');
+      labelMensual?.classList.remove('text-gray-400');
+      labelMensual?.classList.add('text-white');
+      labelAnual?.classList.remove('text-white');
+      labelAnual?.classList.add('text-gray-400');
+      preciosMensuales.forEach(el => el.classList.remove('hidden'));
+      preciosAnuales.forEach(el => el.classList.add('hidden'));
+    }
+  });
+</script>
