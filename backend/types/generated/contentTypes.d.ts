@@ -755,6 +755,37 @@ export interface ApiEntrenadorEntrenador extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiMailMail extends Struct.CollectionTypeSchema {
+  collectionName: 'mails';
+  info: {
+    displayName: 'Mails';
+    pluralName: 'mails';
+    singularName: 'mail';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    asunto: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email: Schema.Attribute.Email & Schema.Attribute.Required;
+    leido: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::mail.mail'> &
+      Schema.Attribute.Private;
+    mensaje: Schema.Attribute.Text & Schema.Attribute.Required;
+    nombre: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiResenaResena extends Struct.CollectionTypeSchema {
   collectionName: 'resenas';
   info: {
@@ -1341,6 +1372,7 @@ declare module '@strapi/strapi' {
       'api::articulo.articulo': ApiArticuloArticulo;
       'api::ejercicio.ejercicio': ApiEjercicioEjercicio;
       'api::entrenador.entrenador': ApiEntrenadorEntrenador;
+      'api::mail.mail': ApiMailMail;
       'api::resena.resena': ApiResenaResena;
       'api::usuario.usuario': ApiUsuarioUsuario;
       'plugin::content-releases.release': PluginContentReleasesRelease;

@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "mails",
+  "info": {
+    "singularName": "mail",
+    "pluralName": "mails",
+    "displayName": "Mails"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "nombre": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": false
+    },
+    "asunto": {
+      "type": "string",
+      "required": true
+    },
+    "mensaje": {
+      "type": "text",
+      "required": true
+    },
+    "leido": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    }
+  }
+}
