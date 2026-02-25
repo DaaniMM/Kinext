@@ -90,6 +90,17 @@ const faqsTecnicos = dataFaqsTecnicos?.data || [];
           </div>
         </div>
 
+        <!-- SLIDER TRAMO -->
+        <div id="sliderContainer" class="hidden mt-6">
+          <label class="block text-sm font-semibold mb-4">Seleccionar tramo del ejercicio <span class="text-gray-400 font-normal">(máx. 10 segundos)</span></label>
+          <div id="timeSlider" class="mb-4"></div>
+          <div class="flex justify-between text-sm text-gray-400 mt-2">
+            <span>Inicio: <span id="startTimeLabel" class="text-white font-semibold">0.0s</span></span>
+            <span class="text-yellow-400" id="duracionLabel">Duración: 10.0s</span>
+            <span>Fin: <span id="endTimeLabel" class="text-white font-semibold">10.0s</span></span>
+          </div>
+        </div>
+
         <button id="analizarBtn" disabled class="w-full mt-8 px-8 py-4 rounded-lg bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform">
           Analizar con IA
         </button>
@@ -140,17 +151,9 @@ const faqsTecnicos = dataFaqsTecnicos?.data || [];
           </div>
         </div>
 
-        <!-- ERRORES DETECTADOS -->
+        <!-- ANÁLISIS -->
         <div class="glass-surface rounded-2xl p-8 mb-8">
-          <h3 class="text-2xl font-bold mb-6">Errores Detectados</h3>
-          <div id="erroresLista" class="space-y-4">
-            <!-- Se llenará dinámicamente -->
-          </div>
-        </div>
-
-        <!-- RECOMENDACIONES -->
-        <div class="glass-surface rounded-2xl p-8 mb-8">
-          <h3 class="text-2xl font-bold mb-6">Recomendaciones</h3>
+          <h3 class="text-2xl font-bold mb-6">ANÁLISIS</h3>
           <div id="recomendacionesLista" class="space-y-3">
             <!-- Se llenará dinámicamente -->
           </div>
@@ -198,13 +201,14 @@ const faqsTecnicos = dataFaqsTecnicos?.data || [];
 </Layout>
 
 <script>
+  import noUiSlider from 'nouislider';
+  import 'nouislider/dist/nouislider.css';
+
   // ==========================================
   // SIMULACIÓN SISTEMA AUTH
   // ==========================================
   
-  // 'free' = muestra overlay, no puede usar
-  // 'premium' = acceso completo
-  const userTier = 'premium'; // ← CAMBIAR AQUÍ PARA PROBAR
+  const userTier = 'premium';
 
   const freeOverlay = document.getElementById('freeUserOverlay');
   
@@ -264,6 +268,48 @@ const faqsTecnicos = dataFaqsTecnicos?.data || [];
     analizarBtn.disabled = false;
   }
 
+  // ==========================================
+  // SLIDER TRAMO
+  // ==========================================
+  let startTime = 0;
+  let endTime = 10;
+  const sliderContainer = document.getElementById('sliderContainer');
+  const timeSlider = document.getElementById('timeSlider');
+
+  previewVideo.addEventListener('loadedmetadata', () => {
+    const duration = previewVideo.duration;
+    const maxEnd = Math.min(10, duration);
+
+    sliderContainer.classList.remove('hidden');
+
+    if (timeSlider.noUiSlider) {
+      timeSlider.noUiSlider.destroy();
+    }
+
+    noUiSlider.create(timeSlider, {
+      start: [0, maxEnd],
+      connect: true,
+      range: { min: 0, max: duration },
+      step: 0.5,
+      tooltips: false
+    });
+
+    timeSlider.noUiSlider.on('update', (values) => {
+      startTime = parseFloat(values[0]);
+      endTime = parseFloat(values[1]);
+
+      if (endTime - startTime > 10) {
+        endTime = startTime + 10;
+        timeSlider.noUiSlider.set([startTime, endTime]);
+      }
+
+      document.getElementById('startTimeLabel').textContent = startTime.toFixed(1) + 's';
+      document.getElementById('endTimeLabel').textContent = endTime.toFixed(1) + 's';
+      document.getElementById('duracionLabel').textContent = 'Duración: ' + (endTime - startTime).toFixed(1) + 's';
+        previewVideo.currentTime = startTime;
+    });
+  });
+
   removeVideo.addEventListener('click', (e) => {
     e.stopPropagation();
     selectedFile = null;
@@ -272,6 +318,7 @@ const faqsTecnicos = dataFaqsTecnicos?.data || [];
     uploadPrompt.classList.remove('hidden');
     videoPreview.classList.add('hidden');
     analizarBtn.disabled = true;
+    sliderContainer.classList.add('hidden');
   });
 
   // ==========================================
@@ -284,38 +331,108 @@ const faqsTecnicos = dataFaqsTecnicos?.data || [];
   const loadingStep = document.getElementById('loadingStep');
 
   analizarBtn.addEventListener('click', async () => {
-    if (!selectedFile) return;
+  if (!selectedFile) return;
 
-    // Ocultar upload, mostrar loading
-    uploadSection.classList.add('hidden');
-    loadingSection.classList.remove('hidden');
+  const ejercicio = document.getElementById('ejercicioSelect').value;
+  const formData = new FormData();
+  formData.append('video', selectedFile);
+  formData.append('ejercicio', ejercicio);
+  formData.append('start_time', Math.floor(startTime));
+  formData.append('end_time', Math.floor(endTime));
 
-    // Simular análisis con progreso
-    await simulateAnalysis();
+  uploadSection.classList.add('hidden');
+  loadingSection.classList.remove('hidden');
 
-    // Mostrar resultados
-    loadingSection.classList.add('hidden');
-    resultadoSection.classList.remove('hidden');
-    
-    // Scroll a resultados
-    resultadoSection.scrollIntoView({ behavior: 'smooth' });
-  });
-
-  async function simulateAnalysis() {
-    const steps = [
-      { progress: 20, text: 'Procesando vídeo...' },
-      { progress: 40, text: 'Detectando 33 puntos MediaPipe...' },
-      { progress: 60, text: 'Analizando biomecánica...' },
-      { progress: 80, text: 'Generando feedback con Gemini...' },
-      { progress: 100, text: 'Completado!' }
-    ];
-
-    for (const step of steps) {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      progressBar.style.width = step.progress + '%';
-      loadingStep.textContent = step.text;
+  // Animación de progreso mientras espera
+  let progress = 0;
+  const steps = [
+    { progress: 20, text: 'Procesando vídeo...' },
+    { progress: 40, text: 'Detectando 33 puntos MediaPipe...' },
+    { progress: 60, text: 'Analizando biomecánica...' },
+    { progress: 80, text: 'Generando feedback con Gemini...' },
+  ];
+  let stepIndex = 0;
+  const interval = setInterval(() => {
+    if (stepIndex < steps.length) {
+      progressBar.style.width = steps[stepIndex].progress + '%';
+      loadingStep.textContent = steps[stepIndex].text;
+      stepIndex++;
     }
+  }, 4000);
+
+  try {
+    const response = await fetch('http://13.62.216.127:8000/analizar_video', {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+console.log('RESPUESTA BACKEND:', JSON.stringify(data));
+    clearInterval(interval);
+    progressBar.style.width = '100%';
+    loadingStep.textContent = 'Completado!';
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    loadingSection.classList.add('hidden');
+
+    if (data.success) {
+      mostrarResultado(data.msg);
+      resultadoSection.classList.remove('hidden');
+      resultadoSection.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      alert('Error del análisis: ' + data.msg);
+      uploadSection.classList.remove('hidden');
+    }
+
+  } catch (error) {
+    clearInterval(interval);
+    loadingSection.classList.add('hidden');
+    uploadSection.classList.remove('hidden');
+    alert('Error de conexión con el servidor: ' + error.message);
   }
+});
+
+function markdownToHtml(texto) {
+  return texto
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*\*/g, '')
+    .replace(/^\* /gm, '• ')
+    .replace(/^---$/gm, '<hr class="border-white/10 my-4">')
+    .replace(/\n/g, '<br>');
+}
+
+function mostrarResultado(texto) {
+  const scoreMatch = texto.match(/Puntuaci[oó]n:\s*([\d.]+)\/10/i);
+  const score = scoreMatch ? Math.round(parseFloat(scoreMatch[1]) * 10) : 0;
+
+  document.getElementById('scoreGlobal').innerHTML = `
+    <span class="text-sm text-gray-400">Puntuación</span>
+    <div class="text-3xl font-black ${score >= 80 ? 'text-green-400' : score >= 50 ? 'text-yellow-400' : 'text-red-400'}">
+      ${score}/100
+    </div>
+  `;
+
+  const seccionBien = texto.match(/LO QUE HACES.*?(?=❌|🧠|🛠️|$)/s)?.[0] || '';
+  const seccionErrores = texto.match(/❌.*?(?=🧠|🛠️|$)/s)?.[0] || '';
+  const seccionCausas = texto.match(/🧠.*?(?=🛠️|$)/s)?.[0] || '';
+  const seccionCorreccion = texto.match(/🛠️.*/s)?.[0] || '';
+
+  document.getElementById('recomendacionesLista').innerHTML = `
+  <div class="text-gray-300 leading-relaxed">${markdownToHtml(seccionBien + '\n\n' + seccionErrores + '\n\n' + seccionCausas + '\n\n' + seccionCorreccion)}</div>
+`;
+
+  // Contar errores y advertencias reales del texto
+const numErrores = (texto.match(/❌/g) || []).length;
+const numAdvertencias = (texto.match(/⚠️/g) || []).length;
+const numBien = (texto.match(/✅/g) || []).length || 4;
+
+document.getElementById('puntosCorrectos').textContent = numBien;
+document.getElementById('puntosAdvertencia').textContent = numAdvertencias;
+document.getElementById('puntosError').textContent = numErrores;
+}
+
+  
 
   // ==========================================
   // NUEVO ANÁLISIS
@@ -327,10 +444,7 @@ const faqsTecnicos = dataFaqsTecnicos?.data || [];
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  // Descargar PDF (placeholder)
   document.getElementById('descargarBtn').addEventListener('click', () => {
     alert('Función de descarga PDF próximamente');
   });
 </script>
-
-</Layout>
