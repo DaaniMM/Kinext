@@ -28,7 +28,7 @@ const faqsTecnicos = dataFaqsTecnicos?.data || [];
       <!-- OVERLAY FREE USER (oculto por defecto, se muestra si user es free) -->
         <div id="freeUserOverlay" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6" style="background: rgba(0,0,0,0.92); backdrop-filter: blur(8px);">
         <div class="glass-surface rounded-3xl max-w-md w-full p-8 text-center border-2 border-orange-500/30">
-          <div class="text-6xl mb-4">🔒</div>
+          <div class="text-5xl mb-4"><i class="fa-solid fa-lock text-orange-400"></i></div>
           <h2 class="text-3xl font-bold mb-4">Función <span class="gradient-text">Premium</span></h2>
           <p class="text-gray-400 mb-6">
             El análisis biomecánico IA está disponible solo para usuarios Premium y Pro.
@@ -52,7 +52,7 @@ const faqsTecnicos = dataFaqsTecnicos?.data || [];
           <input type="file" id="videoInput" accept="video/*" class="hidden" />
           
           <div id="uploadPrompt">
-            <div class="text-6xl mb-4">📹</div>
+            <div class="text-5xl mb-4"><i class="fa-solid fa-video text-[var(--color-primary)]"></i></div>
             <p class="text-xl font-semibold mb-2">Arrastra tu vídeo aquí</p>
             <p class="text-gray-400 text-sm mb-4">o haz click para seleccionar</p>
             <p class="text-xs text-gray-500">MP4, MOV, AVI • Máx 50MB</p>
@@ -134,17 +134,17 @@ const faqsTecnicos = dataFaqsTecnicos?.data || [];
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="text-center p-6 rounded-xl bg-white/5">
-              <div class="text-4xl mb-2">✅</div>
+              <div class="text-4xl mb-2"><i class="fa-solid fa-circle-check text-green-400"></i></div>
               <div class="text-2xl font-bold text-green-400" id="puntosCorrectos">12</div>
               <div class="text-sm text-gray-400">Puntos Correctos</div>
             </div>
             <div class="text-center p-6 rounded-xl bg-white/5">
-              <div class="text-4xl mb-2">⚠️</div>
+              <div class="text-4xl mb-2"><i class="fa-solid fa-triangle-exclamation text-yellow-400"></i></div>
               <div class="text-2xl font-bold text-yellow-400" id="puntosAdvertencia">3</div>
               <div class="text-sm text-gray-400">Advertencias</div>
             </div>
             <div class="text-center p-6 rounded-xl bg-white/5">
-              <div class="text-4xl mb-2">❌</div>
+              <div class="text-4xl mb-2"><i class="fa-solid fa-circle-xmark text-red-400"></i></div>
               <div class="text-2xl font-bold text-red-400" id="puntosError">1</div>
               <div class="text-sm text-gray-400">Errores Críticos</div>
             </div>
