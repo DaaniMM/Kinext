@@ -428,7 +428,7 @@ const blogs = dataBlogs?.data || [];
   gsap.registerPlugin(ScrollTrigger);
 
   // ==========================================
-  // 1. HERO - ZOOM OUT DRAMÁTICO + GRADIENT ANIMADO
+  // HERO - ZOOM OUT  + GRADIENT ANIMADO
   // ==========================================
   const heroTimeline = gsap.timeline();
   
@@ -452,7 +452,7 @@ const blogs = dataBlogs?.data || [];
 	  clearProps: "all"
     }, '-=0.3');
 
-  // Gradiente animado "Entrenador"
+  // Gradiente animado "h1"
   gsap.to('.gradient-text', {
   backgroundPosition: '300% center',
   duration: 10,
@@ -460,8 +460,9 @@ const blogs = dataBlogs?.data || [];
   ease: 'none',
 });
 
+
   // ==========================================
-  // 2. STATS - CONTADOR ANIMADO
+  // STATS - CONTADOR ANIMADO
   // ==========================================
   function animateCounter(element, target) {
     gsap.to(element, {
@@ -484,8 +485,9 @@ const blogs = dataBlogs?.data || [];
   animateCounter(stats[1], 32);
   animateCounter(stats[2], 1800);
 
+
     // ==========================================
-  // 4. PLANES - PREMIUM POP
+  // PLANES - PREMIUM POP
   // ==========================================
   gsap.from('.border-\\[var\\(--color-primary\\)\\]', {
     scrollTrigger: {

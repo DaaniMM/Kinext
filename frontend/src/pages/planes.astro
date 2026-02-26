@@ -41,7 +41,7 @@ const faqs = dataFaqs?.data || [];
     <div class="max-w-7xl mx-auto">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {planes.map((plan: any) => (
-          <div class={`glass-surface rounded-2xl p-8 border-2 relative flex flex-col ${plan.destacado ? 'border-[var(--color-primary)]' : 'border-white/10'}`}>
+          <div class={`tilt-card glass-surface rounded-2xl p-8 border-2 relative flex flex-col ${plan.destacado ? 'border-[var(--color-primary)]' : 'border-white/10'}`}>
             
             {plan.destacado && (
               <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-sm font-bold whitespace-nowrap">
@@ -222,5 +222,43 @@ const faqs = dataFaqs?.data || [];
       preciosMensuales.forEach(el => el.classList.remove('hidden'));
       preciosAnuales.forEach(el => el.classList.add('hidden'));
     }
+  });
+</script>
+
+
+//ANIMACIONES CON GSAP
+
+<script>
+  import gsap from 'gsap';
+
+  document.querySelectorAll('.tilt-card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -10;
+      const rotateY = ((x - centerX) / centerX) * 10;
+
+      gsap.to(card, {
+        rotateX,
+        rotateY,
+        scale: 1.03,
+        transformPerspective: 1000,
+        duration: 0.3,
+        ease: 'power2.out'
+      });
+    });
+
+    card.addEventListener('mouseleave', () => {
+      gsap.to(card, {
+        rotateX: 0,
+        rotateY: 0,
+        scale: 1,
+        duration: 0.5,
+        ease: 'power2.out'
+      });
+    });
   });
 </script>

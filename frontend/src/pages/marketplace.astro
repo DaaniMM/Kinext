@@ -76,42 +76,7 @@ console.log('TRAINER 1:', JSON.stringify(trainers[0], null, 2));
       </div>
 
       <!-- GRID TRAINERS -->
-      <div id="trainersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-        {trainers.slice(0, 6).map(trainer => (
-          <div class="tilt-card trainer-card glass-surface rounded-xl overflow-hidden border border-white/10 cursor-pointer hover:border-[var(--color-primary)]/30 transition-all" data-trainer-id={trainer.id}>
-            <div class="flex gap-4 p-4 relative">
-              <div style="height: 200px;" class="rounded-lg bg-gray-900 flex-shrink-0 overflow-hidden relative">
-                {trainer.foto_perfil?.url && (
-                  <img src={`http://13.62.216.127:1337${trainer.foto_perfil.url}`} alt={trainer.nombre} class="w-full h-full object-cover" />
-                )}
-              </div>
-              <div class="absolute bottom-2 right-2">
-                <span class="px-2 py-1 rounded bg-black/60 backdrop-blur-sm text-xs font-bold">
-                  ★ {trainer.valoracion}
-                </span>
-              </div>
-              <div class="flex-1 min-w-0">
-                <div class="flex items-start justify-between mb-2">
-                  <div class="flex-1 min-w-0">
-                    <h3 class="text-lg font-bold truncate">{trainer.nombre}</h3>
-                    <p class="text-xs text-gray-400">{trainer.ciudad}</p>
-                  </div>
-                  <div class="text-right ml-2">
-                    <div class="text-xl font-bold gradient-text whitespace-nowrap">{trainer.precio_sesion}€</div>
-                    <div class="text-xs text-gray-500">/sesión</div>
-                  </div>
-                </div>
-                <div class="flex gap-1 mb-2 flex-wrap">
-                  {trainer.modalidad?.slice(0, 2).map(mod => (
-                    <span class="px-2 py-0.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs">{mod}</span>
-                  ))}
-                </div>
-                <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">{trainer.bio}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <div id="trainersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8"></div>
 
       <!-- LOAD MORE -->
       <div class="text-center mt-12">
@@ -148,15 +113,60 @@ console.log('TRAINER 1:', JSON.stringify(trainers[0], null, 2));
 
 </Layout>
 
-
-
-
-
 <script define:vars={{ trainers }}>
   const modal = document.getElementById('trainerModal');
   const closeModalBtn = document.getElementById('closeModal');
   const modalContent = document.getElementById('modalContent');
-  const trainerCards = document.querySelectorAll('.trainer-card');
+
+  function calcularMedia(resenas) {
+    if (!resenas || resenas.length === 0) return '—';
+    const suma = resenas.reduce((acc, r) => acc + r.puntuacion, 0);
+    return (suma / resenas.length).toFixed(2);
+  }
+
+  function renderCard(trainer) {
+    return `
+      <div class="tilt-card trainer-card glass-surface rounded-xl overflow-hidden border border-white/10 cursor-pointer hover:border-[var(--color-primary)]/30 transition-all" data-trainer-id="${trainer.id}">
+        <div class="flex gap-4 p-4 relative">
+          <div style="height: 200px;" class="rounded-lg bg-gray-900 flex-shrink-0 overflow-hidden relative">
+            ${trainer.foto_perfil?.url ? `<img src="http://13.62.216.127:1337${trainer.foto_perfil.url}" alt="${trainer.nombre}" class="w-full h-full object-cover" />` : ''}
+          </div>
+          <div class="absolute bottom-2 right-2">
+            <span class="px-2 py-1 rounded bg-black/60 backdrop-blur-sm text-xs font-bold">★ ${calcularMedia(trainer.resenas)}</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between mb-2">
+              <div class="flex-1 min-w-0">
+                <h3 class="text-lg font-bold truncate">${trainer.nombre}</h3>
+                <p class="text-xs text-gray-400">${trainer.ciudad}</p>
+              </div>
+              <div class="text-right ml-2">
+                <div class="text-xl font-bold gradient-text whitespace-nowrap">${trainer.precio_sesion}€</div>
+                <div class="text-xs text-gray-500">/sesión</div>
+              </div>
+            </div>
+            <div class="flex gap-1 mb-2 flex-wrap">
+              ${trainer.modalidad?.slice(0, 2).map(mod => `<span class="px-2 py-0.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs">${mod}</span>`).join('')}
+            </div>
+            <div class="flex gap-1 mb-2 flex-wrap">
+              ${trainer.especialidad?.slice(0, 2).map(esp => `<span class="px-2 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-400 text-xs">${esp}</span>`).join('')}
+            </div>
+            <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">${trainer.bio}</p>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function attachCardEvents() {
+    document.querySelectorAll('.trainer-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const trainerId = parseInt(card.dataset.trainerId);
+        const trainer = trainers.find(t => t.id === trainerId);
+        if (trainer) openModal(trainer);
+      });
+    });
+  }
 
   function openModal(trainer) {
     document.body.style.overflow = 'hidden';
@@ -171,38 +181,33 @@ console.log('TRAINER 1:', JSON.stringify(trainers[0], null, 2));
               ${trainer.modalidad.map(m => `<span class="px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-sm">${m}</span>`).join('')}
             </div>
             <div class="text-4xl font-bold gradient-text mb-2">${trainer.precio_sesion}€ <span class="text-sm text-gray-500">/sesión</span></div>
-            <div class="text-yellow-400 text-lg">★ ${trainer.valoracion} (${trainer.num_resenas} reseñas)</div>
+            <div class="text-yellow-400 text-lg">★ ${calcularMedia(trainer.resenas)} (${trainer.resenas?.length || 0} reseñas)</div>
           </div>
         </div>
-
         <div class="mb-6">
           <h3 class="text-xl font-bold mb-2">Sobre mí</h3>
           <p class="text-gray-300 leading-relaxed">${trainer.bio}</p>
         </div>
-
         <div class="mb-6">
           <h3 class="text-xl font-bold mb-2">Certificaciones</h3>
           <p class="text-gray-300 whitespace-pre-line">${trainer.certificaciones}</p>
         </div>
-
         <div class="mb-6">
           <h3 class="text-xl font-bold mb-2">Idiomas</h3>
           <p class="text-gray-300">${trainer.idiomas.join(', ')}</p>
         </div>
-
-          <div class="mb-6">
-            <h3 class="text-xl font-bold mb-4">Reseñas</h3>
-            ${trainer.resenas.slice(0, 3).map(r => `
-              <div class="glass-surface rounded-lg px-5 py-4 mb-3">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="font-semibold">${r.autor}</span>
-                  <span class="text-yellow-400">${'★'.repeat(r.puntuacion)}</span>
-                </div>
-                <p class="text-sm text-gray-300 pb-1">${r.texto}</p>
+        <div class="mb-6">
+          <h3 class="text-xl font-bold mb-4">Reseñas</h3>
+          ${trainer.resenas.slice(0, 3).map(r => `
+            <div class="glass-surface rounded-lg px-5 py-4 mb-3">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-semibold">${r.autor}</span>
+                <span class="text-yellow-400">${'★'.repeat(r.puntuacion)}</span>
               </div>
-            `).join('')}
-          </div>
-
+              <p class="text-sm text-gray-300 pb-1">${r.texto}</p>
+            </div>
+          `).join('')}
+        </div>
         <a href="mailto:${trainer.email}" class="block text-center mt-2 px-8 py-4 rounded-lg bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white font-bold hover:scale-105 transition-transform">
           Contactar Ahora
         </a>
@@ -219,97 +224,62 @@ console.log('TRAINER 1:', JSON.stringify(trainers[0], null, 2));
     modal.classList.remove('block');
   }
 
-  trainerCards.forEach(card => {
-    card.addEventListener('click', () => {
-      const trainerId = parseInt(card.dataset.trainerId);
-      const trainer = trainers.find(t => t.id === trainerId);
-      if (trainer) openModal(trainer);
-    });
-  });
-
   closeModalBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) closeModal();
-  });
+  const searchInput = document.getElementById('searchInput');
+  const cityFilter = document.getElementById('cityFilter');
+  const specialtyFilter = document.getElementById('specialtyFilter');
+  const sortFilter = document.getElementById('sortFilter');
+  const trainersGrid = document.getElementById('trainersGrid');
+  const resultCount = document.getElementById('resultCount');
+  const loadMoreBtn = document.getElementById('loadMoreBtn');
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeModal();
-  });
+  const POR_PAGINA = 4;
+  let filteredGlobal = [];
 
+  function filterAndRender() {
+    const searchVal = searchInput.value.toLowerCase();
+    const cityVal = cityFilter.value;
+    const specialtyVal = specialtyFilter.value;
+    const sortVal = sortFilter.value;
 
-
-const searchInput = document.getElementById('searchInput');
-const cityFilter = document.getElementById('cityFilter');
-const specialtyFilter = document.getElementById('specialtyFilter');
-const sortFilter = document.getElementById('sortFilter');
-const trainersGrid = document.getElementById('trainersGrid');
-const resultCount = document.getElementById('resultCount');
-
-function filterAndRender() {
-  const searchVal = searchInput.value.toLowerCase();
-  const cityVal = cityFilter.value;
-  const specialtyVal = specialtyFilter.value;
-  const sortVal = sortFilter.value;
-
-  let filtered = trainers.filter(t => {
-    const matchName = t.nombre.toLowerCase().includes(searchVal);
-    const matchCity = cityVal === '' || t.ciudad === cityVal;
-    const matchSpecialty = specialtyVal === '' || (t.especialidad && t.especialidad.includes(specialtyVal));
-    return matchName && matchCity && matchSpecialty;
-  });
-
-  if (sortVal === 'price-asc') filtered.sort((a, b) => a.precio_sesion - b.precio_sesion);
-  if (sortVal === 'price-desc') filtered.sort((a, b) => b.precio_sesion - a.precio_sesion);
-  if (sortVal === 'rating') filtered.sort((a, b) => b.valoracion - a.valoracion);
-
-  resultCount.textContent = filtered.length;
-
-  trainersGrid.innerHTML = filtered.map(trainer => `
-    <div class="tilt-card trainer-card glass-surface rounded-xl overflow-hidden border border-white/10 cursor-pointer hover:border-[var(--color-primary)]/30 transition-all" data-trainer-id="${trainer.id}">
-      <div class="flex gap-4 p-4 relative">
-        <div style="height: 200px;" class="rounded-lg bg-gray-900 flex-shrink-0 overflow-hidden relative">
-          ${trainer.foto_perfil?.url ? `<img src="http://13.62.216.127:1337${trainer.foto_perfil.url}" alt="${trainer.nombre}" class="w-full h-full object-cover" />` : ''}
-        </div>
-        <div class="absolute bottom-2 right-2">
-          <span class="valoracion px-2 py-1 rounded bg-black/60 backdrop-blur-sm text-xs font-bold">★ ${trainer.valoracion}</span>
-        </div>
-        <div class="flex-1 min-w-0">
-          <div class="flex items-start justify-between mb-2">
-            <div class="flex-1 min-w-0">
-              <h3 class="text-lg font-bold truncate">${trainer.nombre}</h3>
-              <p class="text-xs text-gray-400">${trainer.ciudad}</p>
-            </div>
-            <div class="text-right ml-2">
-              <div class="text-xl font-bold gradient-text whitespace-nowrap">${trainer.precio_sesion}€</div>
-              <div class="text-xs text-gray-500">/sesión</div>
-            </div>
-          </div>
-          <div class="flex gap-1 mb-2 flex-wrap">
-            ${trainer.modalidad?.slice(0, 2).map(mod => `<span class="px-2 py-0.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs">${mod}</span>`).join('')}
-          </div>
-          <div class="flex gap-1 mb-2 flex-wrap">
-            ${trainer.especialidad?.slice(0, 2).map(esp => `<span class="px-2 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-400 text-xs">${esp}</span>`).join('')}
-          </div>
-          <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">${trainer.bio}</p>
-        </div>
-      </div>
-    </div>
-  `).join('');
-
-  // Reasignar eventos click a las nuevas cards renderizadas
-  trainersGrid.querySelectorAll('.trainer-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const trainerId = parseInt(card.dataset.trainerId);
-      const trainer = trainers.find(t => t.id === trainerId);
-      if (trainer) openModal(trainer);
+    filteredGlobal = trainers.filter(t => {
+      const matchName = t.nombre.toLowerCase().includes(searchVal);
+      const matchCity = cityVal === '' || t.ciudad === cityVal;
+      const matchSpecialty = specialtyVal === '' || (t.especialidad && t.especialidad.includes(specialtyVal));
+      return matchName && matchCity && matchSpecialty;
     });
-  });
-}
 
-searchInput.addEventListener('input', filterAndRender);
-cityFilter.addEventListener('change', filterAndRender);
-specialtyFilter.addEventListener('change', filterAndRender);
-sortFilter.addEventListener('change', filterAndRender);
-filterAndRender();
+    if (sortVal === 'price-asc') filteredGlobal.sort((a, b) => a.precio_sesion - b.precio_sesion);
+    if (sortVal === 'price-desc') filteredGlobal.sort((a, b) => b.precio_sesion - a.precio_sesion);
+    if (sortVal === 'rating') filteredGlobal.sort((a, b) => {
+      const mediaA = a.resenas?.length ? a.resenas.reduce((s, r) => s + r.puntuacion, 0) / a.resenas.length : 0;
+      const mediaB = b.resenas?.length ? b.resenas.reduce((s, r) => s + r.puntuacion, 0) / b.resenas.length : 0;
+      return mediaB - mediaA;
+    });
+
+    resultCount.textContent = filteredGlobal.length;
+    trainersGrid.innerHTML = filteredGlobal.slice(0, POR_PAGINA).map(renderCard).join('');
+    attachCardEvents();
+
+    if (filteredGlobal.length > POR_PAGINA) {
+      loadMoreBtn.classList.remove('hidden');
+    } else {
+      loadMoreBtn.classList.add('hidden');
+    }
+  }
+
+  loadMoreBtn.addEventListener('click', () => {
+    trainersGrid.innerHTML = filteredGlobal.map(renderCard).join('');
+    attachCardEvents();
+    loadMoreBtn.classList.add('hidden');
+  });
+
+  searchInput.addEventListener('input', filterAndRender);
+  cityFilter.addEventListener('change', filterAndRender);
+  specialtyFilter.addEventListener('change', filterAndRender);
+  sortFilter.addEventListener('change', filterAndRender);
+  filterAndRender();
 </script>
