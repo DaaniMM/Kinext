@@ -205,10 +205,19 @@ const faqsTecnicos = dataFaqsTecnicos?.data || [];
   import 'nouislider/dist/nouislider.css';
 
   // ==========================================
-  // SIMULACIÓN SISTEMA AUTH
+  // SISTEMA AUTH (free no puede usar esta pagina)
   // ==========================================
   
-  const userTier = 'premium';
+  let userTier = 'free';
+  try {
+    const raw = localStorage.getItem('kinext_user');
+    if (raw) {
+      const user = JSON.parse(raw);
+      userTier = user.plan || 'free';
+    }
+  } catch (e) {
+    console.error('Error leyendo sesión:', e);
+  };
 
   const freeOverlay = document.getElementById('freeUserOverlay');
   

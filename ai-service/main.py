@@ -7,12 +7,15 @@
     #File? -> UNICO USO-> File(...) --> indica a la funcion que el parametro que va a recibir no es una variable del codigo, sino un elemento que va a recibirse mediante la peticion HTTP (recordatorio: en arc se pasaba en el BODY un json con los datos que queria insertar en bd -> pues ese archivo es el video literalmente en .mp4 )
     #fastapi.middleware.cors -> permisos para que front y end se comuniquen -> como front y back estan separados, por defecto de seguridad no pueden comunicar -> permite indicar exactamente las url de las que quiero recibir/enviar datos, indicar métodos permitidos , etc (headers)
     #os -> leer la api key, trabajar con archivos/carpetas para buscar archivo temporal y borrarlo
+
     #analisis_gemini -> el archivo .py que contiene el método para analizar el video usando geminis
 
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 import tempfile
 import os
+import httpx 
+from pydantic import BaseModel
 from analisis_gemini import analizarGemini
 
 
@@ -107,6 +110,34 @@ async def guardar_contacto(data: ContactoSchema):
             return {"ok": True}
         else:
             raise HTTPException(status_code=500, detail="Error guardando en Strapi")
+
+
+
+class ContactoSchema(BaseModel):
+    nombre: str
+    email: str
+    asunto: str
+    mensaje: str
+
+@app.post("/contacto")
+async def guardar_contacto(data: ContactoSchema):
+    strapi_url = "http://localhost:1337/api/mails"
+    payload = {
+        "data": {
+            "nombre": data.nombre,
+            "email": data.email,
+            "asunto": data.asunto,
+            "mensaje": data.mensaje,
+            "leido": False
+        }
+    }
+    async with httpx.AsyncClient() as client:
+        res = await client.post(strapi_url, json=payload)
+        if res.status_code in [200, 201]:
+            return {"ok": True}
+        else:
+            raise HTTPException(status_code=500, detail="Error guardando en Strapi")
+
 
 
 # http://127.0.0.1:8000

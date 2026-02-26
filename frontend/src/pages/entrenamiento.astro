@@ -1,0 +1,359 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const STRAPI = "http://13.62.216.127:1337";
+const resEjercicios = await fetch(`${STRAPI}/api/ejercicios?sort=nombre:asc&pagination[limit]=100`);
+const dataEjercicios = await resEjercicios.json();
+const ejercicios = dataEjercicios?.data || [];
+---
+
+<Layout title="KINEXT - Entrenamiento">
+
+  <div id="entreno-content" class="hidden">
+
+    <!-- OVERLAY INICIO -->
+    <div id="overlay-inicio" class="fixed inset-0 z-50 flex items-center justify-center p-6" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);">
+      <div class="glass-surface rounded-3xl max-w-md w-full p-10 text-center border border-white/10">
+        <div class="w-20 h-20 rounded-2xl bg-[var(--color-primary)]/20 flex items-center justify-center mx-auto mb-6">
+          <i class="fa-solid fa-dumbbell text-[var(--color-primary)] text-4xl"></i>
+        </div>
+        <h1 class="text-3xl font-black text-white mb-3">¿Listo para entrenar?</h1>
+        <p class="text-gray-400 mb-8">Registra tu sesión de hoy y lleva el control de tu progreso.</p>
+        <button id="btn-empezar" class="w-full py-4 rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white font-bold text-lg hover:scale-[1.02] transition-transform">
+          <i class="fa-solid fa-play mr-2"></i> Empezar entrenamiento
+        </button>
+      </div>
+    </div>
+
+    <!-- PÁGINA PRINCIPAL -->
+    <section class="pt-28 pb-20 px-6">
+      <div class="max-w-3xl mx-auto">
+
+        <!-- CABECERA CON CRONÓMETRO -->
+        <div class="glass-surface rounded-2xl p-6 mb-6 flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-black text-white">Entrenamiento en curso</h1>
+            <p id="fecha-entreno" class="text-sm text-gray-500 mt-1"></p>
+          </div>
+          <div class="text-right">
+            <div id="cronometro" class="text-4xl font-black text-[var(--color-primary)] font-mono">00:00</div>
+            <p class="text-xs text-gray-500 mt-1">tiempo total</p>
+          </div>
+        </div>
+
+        <!-- EJERCICIOS REGISTRADOS -->
+        <div id="ejercicios-lista" class="space-y-4 mb-6"></div>
+
+        <!-- AÑADIR EJERCICIO -->
+        <div id="panel-ejercicio" class="glass-surface rounded-2xl p-6 mb-6">
+          <h2 class="text-lg font-bold text-white mb-5">
+            <i class="fa-solid fa-plus text-[var(--color-primary)] mr-2"></i>Añadir ejercicio
+          </h2>
+
+          <!-- Select ejercicio -->
+          <div class="mb-5">
+            <label class="block text-sm font-semibold text-gray-400 mb-2">Ejercicio</label>
+            <select id="select-ejercicio" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-[var(--color-primary)] transition">
+              <option value="">Selecciona un ejercicio...</option>
+              {ejercicios.map((e: any) => (
+                <option value={e.id} data-nombre={e.nombre}>{e.nombre}</option>
+              ))}
+            </select>
+          </div>
+
+          <!-- Series -->
+          <div id="series-container" class="space-y-3 mb-5"></div>
+
+          <!-- Botón añadir serie -->
+          <button id="btn-add-serie" class="w-full py-3 rounded-xl border-2 border-dashed border-white/20 text-gray-400 hover:border-[var(--color-primary)]/50 hover:text-[var(--color-primary)] transition text-sm font-semibold">
+            <i class="fa-solid fa-plus mr-2"></i>Añadir serie
+          </button>
+
+          <!-- Notas -->
+          <div class="mt-5">
+            <label class="block text-sm font-semibold text-gray-400 mb-2">Notas (opcional)</label>
+            <textarea id="notas-ejercicio" rows="2" placeholder="Sensaciones, técnica, ajustes..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-[var(--color-primary)] transition resize-none text-sm"></textarea>
+          </div>
+
+          <!-- Guardar ejercicio -->
+          <button id="btn-guardar-ejercicio" class="w-full mt-5 py-4 rounded-xl bg-[var(--color-primary)]/20 border border-[var(--color-primary)]/30 text-[var(--color-primary)] font-bold hover:bg-[var(--color-primary)]/30 transition">
+            <i class="fa-solid fa-floppy-disk mr-2"></i>Guardar ejercicio
+          </button>
+        </div>
+
+        <!-- TERMINAR ENTRENAMIENTO -->
+        <div class="glass-surface rounded-2xl p-6">
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-400 mb-2">Notas del entrenamiento (opcional)</label>
+            <textarea id="notas-entreno" rows="2" placeholder="¿Cómo ha ido el entreno?"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-[var(--color-primary)] transition resize-none text-sm"></textarea>
+          </div>
+          <button id="btn-terminar" class="w-full py-4 rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white font-bold text-lg hover:scale-[1.02] transition-transform">
+            <i class="fa-solid fa-flag-checkered mr-2"></i>Terminar entrenamiento
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- MODAL RESUMEN -->
+    <div id="modal-resumen" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);">
+      <div class="glass-surface rounded-3xl max-w-md w-full p-8 text-center border border-white/10">
+        <div class="w-16 h-16 rounded-2xl bg-green-500/20 flex items-center justify-center mx-auto mb-4">
+          <i class="fa-solid fa-trophy text-green-400 text-3xl"></i>
+        </div>
+        <h2 class="text-2xl font-black text-white mb-2">¡Entrenamiento completado!</h2>
+        <p id="resumen-texto" class="text-gray-400 mb-6"></p>
+        <div class="grid grid-cols-3 gap-3 mb-6">
+          <div class="bg-white/5 rounded-xl p-3">
+            <p id="resumen-ejercicios" class="text-2xl font-black text-white">0</p>
+            <p class="text-xs text-gray-500">Ejercicios</p>
+          </div>
+          <div class="bg-white/5 rounded-xl p-3">
+            <p id="resumen-series" class="text-2xl font-black text-white">0</p>
+            <p class="text-xs text-gray-500">Series</p>
+          </div>
+          <div class="bg-white/5 rounded-xl p-3">
+            <p id="resumen-tiempo" class="text-2xl font-black text-white">0</p>
+            <p class="text-xs text-gray-500">Minutos</p>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <a href="/perfil" class="flex-1 py-3 rounded-xl bg-white/5 text-gray-300 font-semibold hover:bg-white/10 transition text-sm">
+            Ver perfil
+          </a>
+          <button id="btn-nuevo-entreno" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white font-bold text-sm hover:scale-[1.02] transition-transform">
+            Nuevo entreno
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</Layout>
+
+<script>
+  const STRAPI = 'http://13.62.216.127:1337';
+
+  // Verificar sesión
+  const raw = localStorage.getItem('kinext_user');
+  if (!raw) {
+    window.location.href = '/login';
+  } else {
+    document.getElementById('entreno-content')!.classList.remove('hidden');
+  }
+
+  const user = raw ? JSON.parse(raw) : null;
+
+  // Fecha
+  const fecha = new Date();
+  document.getElementById('fecha-entreno')!.textContent = fecha.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+  // Estado
+  let ejerciciosGuardados: any[] = [];
+  let seriesActuales: number = 0;
+  let segundos: number = 0;
+  let cronometroInterval: any = null;
+
+  // Overlay inicio
+  document.getElementById('btn-empezar')!.addEventListener('click', () => {
+    document.getElementById('overlay-inicio')!.style.display = 'none';
+    iniciarCronometro();
+    agregarSerie(); // Primera serie por defecto
+  });
+
+  // Cronómetro
+  function iniciarCronometro() {
+    cronometroInterval = setInterval(() => {
+      segundos++;
+      const m = Math.floor(segundos / 60).toString().padStart(2, '0');
+      const s = (segundos % 60).toString().padStart(2, '0');
+      document.getElementById('cronometro')!.textContent = `${m}:${s}`;
+    }, 1000);
+  }
+
+  // Añadir serie
+  document.getElementById('btn-add-serie')!.addEventListener('click', agregarSerie);
+
+  function agregarSerie() {
+    seriesActuales++;
+    const container = document.getElementById('series-container')!;
+    const div = document.createElement('div');
+    div.className = 'serie-item flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10';
+    div.innerHTML = `
+      <span class="w-8 h-8 rounded-lg bg-[var(--color-primary)]/20 flex items-center justify-center text-[var(--color-primary)] text-sm font-bold flex-shrink-0">${seriesActuales}</span>
+      <div class="flex-1 grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Repeticiones</label>
+          <input type="number" placeholder="12" min="1" class="input-reps w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[var(--color-primary)] transition"/>
+        </div>
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Peso (kg)</label>
+          <input type="number" placeholder="0" min="0" step="0.5" class="input-peso w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[var(--color-primary)] transition"/>
+        </div>
+      </div>
+      <button class="btn-remove-serie text-gray-600 hover:text-red-400 transition flex-shrink-0">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    `;
+    div.querySelector('.btn-remove-serie')!.addEventListener('click', () => {
+      div.remove();
+      // Renumerar
+      document.querySelectorAll('.serie-item span').forEach((span, i) => {
+        span.textContent = String(i + 1);
+      });
+      seriesActuales = document.querySelectorAll('.serie-item').length;
+    });
+    container.appendChild(div);
+  }
+
+  // Guardar ejercicio
+  document.getElementById('btn-guardar-ejercicio')!.addEventListener('click', () => {
+    const select = document.getElementById('select-ejercicio') as HTMLSelectElement;
+    const ejercicioId = select.value;
+    const ejercicioNombre = select.options[select.selectedIndex]?.dataset.nombre;
+
+    if (!ejercicioId) {
+      alert('Selecciona un ejercicio.');
+      return;
+    }
+
+    const series: any[] = [];
+    document.querySelectorAll('.serie-item').forEach((item, i) => {
+      const reps = (item.querySelector('.input-reps') as HTMLInputElement).value;
+      const peso = (item.querySelector('.input-peso') as HTMLInputElement).value;
+      if (reps) {
+        series.push({
+          numero_serie: i + 1,
+          repeticiones: parseInt(reps),
+          peso: parseFloat(peso) || 0,
+          ejercicio_id: ejercicioId
+        });
+      }
+    });
+
+    if (series.length === 0) {
+      alert('Añade al menos una serie con repeticiones.');
+      return;
+    }
+
+    const notas = (document.getElementById('notas-ejercicio') as HTMLTextAreaElement).value;
+
+    ejerciciosGuardados.push({ ejercicioId, ejercicioNombre, series, notas });
+    renderEjerciciosGuardados();
+
+    // Reset panel
+    select.value = '';
+    document.getElementById('series-container')!.innerHTML = '';
+    (document.getElementById('notas-ejercicio') as HTMLTextAreaElement).value = '';
+    seriesActuales = 0;
+    agregarSerie();
+  });
+
+  function renderEjerciciosGuardados() {
+    const lista = document.getElementById('ejercicios-lista')!;
+    lista.innerHTML = ejerciciosGuardados.map((ej, idx) => `
+      <div class="glass-surface rounded-2xl p-5 border border-white/10">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-white">${ej.ejercicioNombre}</h3>
+          <button class="btn-delete-ej text-gray-600 hover:text-red-400 transition text-sm" data-idx="${idx}">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+        <div class="grid grid-cols-4 gap-2 text-xs text-gray-500 mb-2 px-1">
+          <span>Serie</span><span>Reps</span><span>Peso</span><span></span>
+        </div>
+        ${ej.series.map((s: any) => `
+          <div class="grid grid-cols-4 gap-2 text-sm py-1.5 border-t border-white/5">
+            <span class="text-gray-500">${s.numero_serie}</span>
+            <span class="text-white font-semibold">${s.repeticiones}</span>
+            <span class="text-white font-semibold">${s.peso} kg</span>
+            <span></span>
+          </div>
+        `).join('')}
+        ${ej.notas ? `<p class="text-xs text-gray-600 mt-2 italic">${ej.notas}</p>` : ''}
+      </div>
+    `).join('');
+
+    document.querySelectorAll('.btn-delete-ej').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt((btn as HTMLElement).dataset.idx!);
+        ejerciciosGuardados.splice(idx, 1);
+        renderEjerciciosGuardados();
+      });
+    });
+  }
+
+  // Terminar entrenamiento
+  document.getElementById('btn-terminar')!.addEventListener('click', async () => {
+    if (ejerciciosGuardados.length === 0) {
+      alert('Añade al menos un ejercicio antes de terminar.');
+      return;
+    }
+
+    clearInterval(cronometroInterval);
+    const duracionMinutos = Math.ceil(segundos / 60);
+    const notas = (document.getElementById('notas-entreno') as HTMLTextAreaElement).value;
+
+    const btn = document.getElementById('btn-terminar') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = 'Guardando...';
+
+    try {
+console.log('Usuario:', user);
+  console.log('Ejercicios:', ejerciciosGuardados);
+      // 1. Crear entreno
+      const resEntreno = await fetch(`${STRAPI}/api/registro-entrenamientos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: {
+          duracion: duracionMinutos,
+          notas,
+          usuario: user.documentId
+        }})
+      });
+      const dataEntreno = await resEntreno.json();console.log('Respuesta entreno:', dataEntreno);
+      const entrenoId = dataEntreno.data?.documentId;
+
+      if (!entrenoId) throw new Error('No se pudo crear el entreno');
+
+      // 2. Crear series
+      for (const ej of ejerciciosGuardados) {
+        for (const serie of ej.series) {
+          await fetch(`${STRAPI}/api/entreno-series`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: {
+              numero_serie: serie.numero_serie,
+              repeticiones: serie.repeticiones,
+              peso: serie.peso,
+              ejercicio: serie.ejercicio_id,
+              entreno: entrenoId
+            }})
+          });
+        }
+      }
+
+      // Mostrar resumen
+      const totalSeries = ejerciciosGuardados.reduce((acc, ej) => acc + ej.series.length, 0);
+      document.getElementById('resumen-ejercicios')!.textContent = String(ejerciciosGuardados.length);
+      document.getElementById('resumen-series')!.textContent = String(totalSeries);
+      document.getElementById('resumen-tiempo')!.textContent = String(duracionMinutos);
+      document.getElementById('resumen-texto')!.textContent = `${ejerciciosGuardados.length} ejercicio${ejerciciosGuardados.length > 1 ? 's' : ''} · ${totalSeries} series · ${duracionMinutos} minutos`;
+      document.getElementById('modal-resumen')!.classList.remove('hidden');
+
+    } catch (e) {
+      alert('Error al guardar. Inténtalo de nuevo.');
+      btn.disabled = false;
+      btn.textContent = 'Terminar entrenamiento';
+      iniciarCronometro();
+    }
+  });
+
+  // Nuevo entreno
+  document.getElementById('btn-nuevo-entreno')!.addEventListener('click', () => {
+    window.location.reload();
+  });
+</script>

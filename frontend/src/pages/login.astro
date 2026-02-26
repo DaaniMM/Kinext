@@ -1,0 +1,303 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="KINEXT - Acceder">
+
+  <section class="min-h-screen flex items-center justify-center px-6 pt-24 pb-12 relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-[var(--color-primary)]/5 to-transparent pointer-events-none"></div>
+
+    <div class="w-full max-w-md relative z-10">
+
+      <!-- Logo -->
+      <div class="text-center mb-8">
+        <a href="/" class="text-3xl font-black text-white">KIN<span class="text-[var(--color-primary)]">EXT</span></a>
+        <p class="text-gray-400 text-sm mt-2">Tu plataforma de análisis biomecánico</p>
+      </div>
+
+      <!-- Card -->
+      <div class="glass-surface rounded-2xl p-8">
+
+        <!-- Tabs -->
+        <div class="flex rounded-xl bg-white/5 p-1 mb-8">
+          <button id="tab-login" class="tab-btn flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all bg-[var(--color-primary)] text-white">
+            Iniciar sesión
+          </button>
+          <button id="tab-registro" class="tab-btn flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all text-gray-400 hover:text-white">
+            Crear cuenta
+          </button>
+        </div>
+
+        <!-- Mensaje feedback -->
+        <div id="msg-success" class="hidden mb-6 p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-400 text-sm">
+          <i class="fa-solid fa-circle-check mr-2"></i><span id="msg-success-text"></span>
+        </div>
+        <div id="msg-error" class="hidden mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+          <i class="fa-solid fa-circle-xmark mr-2"></i><span id="msg-error-text"></span>
+        </div>
+
+        <!-- FORM LOGIN -->
+        <form id="form-login" class="space-y-5">
+          <div>
+            <label class="block text-sm font-semibold text-gray-400 mb-2">Email</label>
+            <input id="login-email" type="email" required placeholder="tu@email.com"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-[var(--color-primary)] transition"/>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-400 mb-2">Contraseña</label>
+            <div class="relative">
+              <input id="login-password" type="password" required placeholder="••••••••"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-[var(--color-primary)] transition pr-12"/>
+              <button type="button" class="toggle-pass absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          <button type="submit" id="btn-login"
+            class="w-full py-4 rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white font-bold text-base hover:scale-[1.02] transition-transform disabled:opacity-50">
+            Entrar
+          </button>
+          <p class="text-center text-xs text-gray-500">
+            ¿No tienes cuenta?
+            <button type="button" id="go-registro" class="text-[var(--color-primary)] hover:underline ml-1">Regístrate gratis</button>
+          </p>
+        </form>
+
+        <!-- FORM REGISTRO -->
+        <form id="form-registro" class="hidden space-y-5">
+          <div>
+            <label class="block text-sm font-semibold text-gray-400 mb-2">Nombre</label>
+            <input id="reg-nombre" type="text" required placeholder="Tu nombre"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-[var(--color-primary)] transition"/>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-400 mb-2">Email</label>
+            <input id="reg-email" type="email" required placeholder="tu@email.com"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-[var(--color-primary)] transition"/>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-400 mb-2">Contraseña</label>
+            <div class="relative">
+              <input id="reg-password" type="password" required placeholder="Mínimo 8 caracteres"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-[var(--color-primary)] transition pr-12"/>
+              <button type="button" class="toggle-pass absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500">
+            Al registrarte obtienes el plan <span id="plan-texto" class="text-white font-semibold">Free</span> automáticamente.
+          </p>
+          <button type="submit" id="btn-registro"
+            class="w-full py-4 rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white font-bold text-base hover:scale-[1.02] transition-transform disabled:opacity-50">
+            Crear cuenta
+          </button>
+          <p class="text-center text-xs text-gray-500">
+            ¿Ya tienes cuenta?
+            <button type="button" id="go-login" class="text-[var(--color-primary)] hover:underline ml-1">Inicia sesión</button>
+          </p>
+        </form>
+
+      </div>
+
+      <!-- Usuarios demo -->
+      <div class="mt-6 glass-surface rounded-2xl p-5">
+        <p class="text-xs text-gray-500 text-center mb-3 uppercase tracking-wider font-semibold">Usuarios de demostración</p>
+        <div class="grid grid-cols-2 gap-3">
+          <button class="demo-btn text-left p-3 rounded-xl bg-white/5 hover:bg-white/10 transition" data-email="free@kinext.es" data-pass="Free1234">
+            <p class="text-xs text-gray-500 mb-0.5">Plan Free</p>
+            <p class="text-sm text-white font-semibold">Free</p>
+            <p class="text-xs text-gray-500">free@kinext.es</p>
+          </button>
+          <button class="demo-btn text-left p-3 rounded-xl bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 hover:bg-[var(--color-primary)]/20 transition" data-email="premium@kinext.es" data-pass="Premium1234">
+            <p class="text-xs text-[var(--color-primary)] mb-0.5">Plan Premium</p>
+            <p class="text-sm text-white font-semibold">Premium</p>
+            <p class="text-xs text-gray-500">premium@kinext.es</p>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</Layout>
+
+<script>
+  const STRAPI = 'http://13.62.216.127:1337';
+
+  const planParam = new URLSearchParams(window.location.search).get('plan') || 'free';
+  const planTexto = document.getElementById('plan-texto');
+  if (planTexto) planTexto.textContent = planParam.charAt(0).toUpperCase() + planParam.slice(1);
+  
+  // Tabs
+  const tabLogin = document.getElementById('tab-login')!;
+  const tabRegistro = document.getElementById('tab-registro')!;
+  const formLogin = document.getElementById('form-login')!;
+  const formRegistro = document.getElementById('form-registro')!;
+
+  function showLogin() {
+    formLogin.classList.remove('hidden');
+    formRegistro.classList.add('hidden');
+    tabLogin.classList.add('bg-[var(--color-primary)]', 'text-white');
+    tabLogin.classList.remove('text-gray-400');
+    tabRegistro.classList.remove('bg-[var(--color-primary)]', 'text-white');
+    tabRegistro.classList.add('text-gray-400');
+    hideMessages();
+  }
+
+  function showRegistro() {
+    formRegistro.classList.remove('hidden');
+    formLogin.classList.add('hidden');
+    tabRegistro.classList.add('bg-[var(--color-primary)]', 'text-white');
+    tabRegistro.classList.remove('text-gray-400');
+    tabLogin.classList.remove('bg-[var(--color-primary)]', 'text-white');
+    tabLogin.classList.add('text-gray-400');
+    hideMessages();
+  }
+
+  tabLogin.addEventListener('click', showLogin);
+  tabRegistro.addEventListener('click', showRegistro);
+  document.getElementById('go-registro')!.addEventListener('click', showRegistro);
+  document.getElementById('go-login')!.addEventListener('click', showLogin);
+
+  function showError(msg: string) {
+    const el = document.getElementById('msg-error')!;
+    document.getElementById('msg-error-text')!.textContent = msg;
+    el.classList.remove('hidden');
+    document.getElementById('msg-success')!.classList.add('hidden');
+  }
+
+  function showSuccess(msg: string) {
+    const el = document.getElementById('msg-success')!;
+    document.getElementById('msg-success-text')!.textContent = msg;
+    el.classList.remove('hidden');
+    document.getElementById('msg-error')!.classList.add('hidden');
+  }
+
+  function hideMessages() {
+    document.getElementById('msg-error')!.classList.add('hidden');
+    document.getElementById('msg-success')!.classList.add('hidden');
+  }
+
+  document.querySelectorAll('.toggle-pass').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = btn.previousElementSibling as HTMLInputElement;
+      const icon = btn.querySelector('i')!;
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+      }
+    });
+  });
+
+  // LOGIN
+  formLogin.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = (document.getElementById('login-email') as HTMLInputElement).value.trim();
+    const password = (document.getElementById('login-password') as HTMLInputElement).value;
+    const btn = document.getElementById('btn-login') as HTMLButtonElement;
+
+    btn.disabled = true;
+    btn.textContent = 'Entrando...';
+    hideMessages();
+
+    try {
+      const res = await fetch(`${STRAPI}/api/usuarios?filters[email][$eq]=${encodeURIComponent(email)}&filters[password][$eq]=${encodeURIComponent(password)}&populate=foto_perfil`);
+      const data = await res.json();
+
+      if (data.data && data.data.length > 0) {
+        const user = data.data[0];
+        localStorage.setItem('kinext_user', JSON.stringify({
+          id: user.id,
+          documentId: user.documentId,
+          nombre: user.nombre,
+          email: user.email,
+          plan: user.plan,
+          foto_perfil: user.foto_perfil?.url || null
+        }));
+        showSuccess('¡Bienvenido! Redirigiendo...');
+        setTimeout(() => { window.location.href = '/perfil'; }, 1000);
+      } else {
+        showError('Email o contraseña incorrectos.');
+      }
+    } catch {
+      showError('Error de conexión. Inténtalo de nuevo.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+    }
+  });
+
+  // REGISTRO
+  formRegistro.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const nombre = (document.getElementById('reg-nombre') as HTMLInputElement).value.trim();
+    const email = (document.getElementById('reg-email') as HTMLInputElement).value.trim();
+    const password = (document.getElementById('reg-password') as HTMLInputElement).value;
+    const btn = document.getElementById('btn-registro') as HTMLButtonElement;
+
+    if (password.length < 8) {
+      showError('La contraseña debe tener al menos 8 caracteres.');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Creando cuenta...';
+    hideMessages();
+
+    try {
+      const check = await fetch(`${STRAPI}/api/usuarios?filters[email][$eq]=${encodeURIComponent(email)}`);
+      const checkData = await check.json();
+      if (checkData.data && checkData.data.length > 0) {
+        showError('Ya existe una cuenta con ese email.');
+        return;
+      }
+
+      const res = await fetch(`${STRAPI}/api/usuarios`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: { nombre, email, password, plan: planParam } })
+      });
+      const data = await res.json();
+
+      if (data.data) {
+        localStorage.setItem('kinext_user', JSON.stringify({
+          id: data.data.id,
+          documentId: data.data.documentId,
+          nombre: data.data.nombre,
+          email: data.data.email,
+          plan: data.data.plan,
+          foto_perfil: null
+        }));
+        showSuccess('¡Cuenta creada! Redirigiendo...');
+        setTimeout(() => { window.location.href = '/perfil'; }, 1000);
+      } else {
+        showError('Error al crear la cuenta. Inténtalo de nuevo.');
+      }
+    } catch {
+      showError('Error de conexión. Inténtalo de nuevo.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Crear cuenta';
+    }
+  });
+
+  document.querySelectorAll('.demo-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const email = (btn as HTMLElement).dataset.email!;
+      const pass = (btn as HTMLElement).dataset.pass!;
+      (document.getElementById('login-email') as HTMLInputElement).value = email;
+      (document.getElementById('login-password') as HTMLInputElement).value = pass;
+      showLogin();
+    });
+  });
+
+  if (planParam !== 'free') showRegistro();
+
+  if (localStorage.getItem('kinext_user')) {
+    window.location.href = '/perfil';
+  }
+</script>
