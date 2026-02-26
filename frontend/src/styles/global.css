@@ -183,3 +183,162 @@ button, select, option{
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+
+/* ========================================== */
+/* MODO CLARO                                 */
+/* ========================================== */
+
+body.light {
+  --bg-main: #F5F5F0;
+  --bg-surface: #EEEEE8;
+  --text-primary: #1A1A1A;
+  --text-secondary: #5A5A5A;
+}
+
+body.light .liquid-bg {
+  background: #F5F5F0;
+}
+
+body.light .blob {
+  opacity: 0.12;
+}
+
+body.light ::-webkit-scrollbar-track {
+  background: #F5F5F0;
+}
+
+body.light .glass-surface {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+
+body.light h1,
+body.light h2,
+body.light h3,
+body.light p,
+
+body.light a,
+body.light li,
+body.light label,
+body.light td,
+body.light th {
+  color: #1A1A1A;
+}
+
+body.light .text-gray-400,
+body.light .text-gray-500,
+body.light .text-gray-600 {
+  color: #5A5A5A !important;
+}
+
+body.light .glass-surface{
+  background-color: rgba(109, 109, 109, 0.15);
+}
+
+body.light .glass-surface input,
+body.light .glass-surface select,
+body.light .glass-surface textarea {
+  color: #1A1A1A;
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+body.light nav {
+  background: rgba(245, 245, 240, 0.85) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+body.light nav a,
+body.light nav p,
+body.light nav span {
+  color: #1A1A1A;
+}
+
+body.light [class*="text-white"],
+body.light [class*="text-gray-"],
+body.light [class*="text-slate-"],
+body.light [class*="text-zinc-"], 
+#closeModal,
+option{
+  color: #050404 !important;
+}
+
+.valoracion{
+  color: #EEEEE8 !important;
+}
+
+body.light [style*="background: rgba(0,0,0"] {
+  background: rgba(245, 245, 240, 0.92) !important;
+}
+
+body.light [id$="Overlay"],
+body.light [id$="overlay"],
+body.light [id="modal-resumen"],
+body.light [id="overlay-inicio"] {
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+
+body.light [id$="Overlay"] .glass-surface,
+body.light [id$="overlay"] .glass-surface,
+body.light [id="modal-resumen"] .glass-surface,
+body.light [id="overlay-inicio"] .glass-surface {
+  background: #EEEEE8 !important;
+  border-color: rgba(0,0,0,0.1) !important;
+}
+
+body.light #trainerModal {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+
+body.light #trainerModal > div > div {
+  background: #EEEEE8 !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Blog - barra de filtros */
+body.light .filtro-btn {
+  color: #1A1A1A !important;
+  border-color: rgba(0,0,0,0.2) !important;
+  background: rgba(0,0,0,0.05);
+}
+
+body.light section.sticky {
+  background: rgba(245, 245, 240, 0.95) !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+/* Blog - badges categoría en cards */
+body.light .blog-card span[class*="bg-[var(--color-primary)]"] {
+  background: var(--color-primary) !important;
+  color: white !important;
+}
+
+/* Footer */
+body.light footer {
+  background: rgba(245, 245, 240, 0.95) !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+body.light footer a,
+body.light footer p,
+body.light footer span {
+  color: #1A1A1A !important;
+}
+
+body.light footer .text-gray-400,
+body.light footer .text-gray-500 {
+  color: #5A5A5A !important;
+}
+
+/* Switch color */
+
+body.light #theme-toggle {
+  background: rgba(0,0,0,0.08) !important;
+  border-color: rgba(0,0,0,0.15) !important;
+}
+
+body.light #theme-toggle div {
+  background: rgba(0,0,0,0.15) !important;
+}

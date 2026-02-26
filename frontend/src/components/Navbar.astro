@@ -1,14 +1,14 @@
 <header>
   <nav class="fixed top-0 left-0 w-full z-50 backdrop-blur-2xl bg-black/60 border-b border-white/5">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
 
       <!-- Logo -->
-      <a href="/" class="flex items-center gap-3">
+      <a href="/" class="flex items-center gap-3 flex-shrink-0">
         <img src="/images/KINEXT_transparentlogo.png" alt="KINEXT Logo" class="w-15 h-12 object-contain" />
       </a>
 
-      <!-- Links navegación -->
-      <ul class="hidden md:flex items-center gap-8 list-none">
+      <!-- Links navegación (desktop) -->
+      <ul class="hidden md:flex items-center gap-8 list-none flex-1 justify-center">
         <li><a href="/entrenamiento" class="text-sm text-gray-400 hover:text-white transition">Entrenamiento</a></li>
         <li><a href="/analizar" class="text-sm text-gray-400 hover:text-white transition">Análisis IA</a></li>
         <li><a href="/marketplace" class="text-sm text-gray-400 hover:text-white transition">Marketplace</a></li>
@@ -17,20 +17,51 @@
         <li><a href="/contacto" class="text-sm text-gray-400 hover:text-white transition">Contacto</a></li>
       </ul>
 
-      <!-- Botón login (por defecto) / Avatar (si hay sesión) -->
-      <div id="nav-auth">
-        <!-- Se renderiza por JS -->
-        <a href="/login"
-          class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white font-semibold text-sm">
-          Empezar
-        </a>
-      </div>
+      <!-- Derecha: theme toggle + auth + hamburger -->
+      <div class="flex items-center gap-3 flex-shrink-0">
 
+        <!-- Theme toggle -->
+        <button id="theme-toggle" class="flex items-center gap-1.5 px-2.5 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition">
+          <i id="theme-icon" class="fa-solid fa-moon text-gray-400 text-sm"></i>
+          <div class="w-8 h-4 rounded-full bg-white/10 relative">
+            <span id="theme-dot" class="absolute left-0.5 top-0.5 w-3 h-3 rounded-full bg-gray-400 transition-all duration-300"></span>
+          </div>
+        </button>
+
+        <!-- Auth -->
+        <div id="nav-auth">
+          <a href="/login" class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white font-semibold text-sm">
+            Empezar
+          </a>
+        </div>
+
+        <!-- Hamburger (solo móvil) -->
+        <button id="hamburger" class="md:hidden flex flex-col gap-1.5 p-2">
+          <span class="hamburger-line block w-6 h-0.5 bg-white transition-all duration-300"></span>
+          <span class="hamburger-line block w-6 h-0.5 bg-white transition-all duration-300"></span>
+          <span class="hamburger-line block w-6 h-0.5 bg-white transition-all duration-300"></span>
+        </button>
+
+      </div>
     </div>
+
+    <!-- Menú móvil -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-white/5 bg-black/80 backdrop-blur-xl">
+      <ul class="flex flex-col px-6 py-4 gap-1 list-none">
+        <li><a href="/entrenamiento" class="block py-3 text-gray-400 hover:text-white transition border-b border-white/5">Entrenamiento</a></li>
+        <li><a href="/analizar" class="block py-3 text-gray-400 hover:text-white transition border-b border-white/5">Análisis IA</a></li>
+        <li><a href="/marketplace" class="block py-3 text-gray-400 hover:text-white transition border-b border-white/5">Marketplace</a></li>
+        <li><a href="/planes" class="block py-3 text-gray-400 hover:text-white transition border-b border-white/5">Planes</a></li>
+        <li><a href="/blog" class="block py-3 text-gray-400 hover:text-white transition border-b border-white/5">Blog</a></li>
+        <li><a href="/contacto" class="block py-3 text-gray-400 hover:text-white transition">Contacto</a></li>
+      </ul>
+    </div>
+
   </nav>
 </header>
 
 <script>
+  // SESIÓN
   const raw = localStorage.getItem('kinext_user');
   const navAuth = document.getElementById('nav-auth');
 
@@ -53,8 +84,6 @@
           </div>
           <i class="fa-solid fa-chevron-down text-gray-500 text-xs"></i>
         </button>
-
-        <!-- Dropdown -->
         <div class="absolute right-0 top-full mt-2 w-48 glass-surface rounded-xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-white/10">
           <a href="/perfil" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition">
             <i class="fa-solid fa-user w-4 text-center"></i> Mi perfil
@@ -75,4 +104,53 @@
       window.location.href = '/';
     });
   }
+
+  // HAMBURGER
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  hamburger?.addEventListener('click', () => {
+    const isOpen = !mobileMenu!.classList.contains('hidden');
+    mobileMenu!.classList.toggle('hidden');
+    const lines = hamburger.querySelectorAll('.hamburger-line');
+    if (!isOpen) {
+      lines[0].classList.add('rotate-45', 'translate-y-2');
+      lines[1].classList.add('opacity-0');
+      lines[2].classList.add('-rotate-45', '-translate-y-2');
+    } else {
+      lines[0].classList.remove('rotate-45', 'translate-y-2');
+      lines[1].classList.remove('opacity-0');
+      lines[2].classList.remove('-rotate-45', '-translate-y-2');
+    }
+  });
+
+  // TEMA
+  const themeBtn = document.getElementById('theme-toggle');
+  const themeIcon = document.getElementById('theme-icon');
+  const themeDot = document.getElementById('theme-dot');
+
+  function applyTheme(isLight: boolean) {
+    if (isLight) {
+      document.body.classList.add('light');
+      themeIcon!.classList.replace('fa-moon', 'fa-sun');
+      themeIcon!.classList.replace('text-gray-400', 'text-yellow-400');
+      themeDot!.classList.replace('left-0.5', 'left-4');
+      themeDot!.classList.replace('bg-gray-400', 'bg-yellow-400');
+    } else {
+      document.body.classList.remove('light');
+      themeIcon!.classList.replace('fa-sun', 'fa-moon');
+      themeIcon!.classList.replace('text-yellow-400', 'text-gray-400');
+      themeDot!.classList.replace('left-4', 'left-0.5');
+      themeDot!.classList.replace('bg-yellow-400', 'bg-gray-400');
+    }
+  }
+
+  const saved = localStorage.getItem('kinext_theme');
+  if (saved === 'light') applyTheme(true);
+
+  themeBtn?.addEventListener('click', () => {
+    const isLight = !document.body.classList.contains('light');
+    applyTheme(isLight);
+    localStorage.setItem('kinext_theme', isLight ? 'light' : 'dark');
+  });
 </script>

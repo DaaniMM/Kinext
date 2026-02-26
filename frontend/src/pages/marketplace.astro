@@ -87,7 +87,7 @@ console.log('TRAINER 1:', JSON.stringify(trainers[0], null, 2));
               </div>
               <div class="absolute bottom-2 right-2">
                 <span class="px-2 py-1 rounded bg-black/60 backdrop-blur-sm text-xs font-bold">
-                  ★ {trainer.valoracion || '4.8'}
+                  ★ {trainer.valoracion}
                 </span>
               </div>
               <div class="flex-1 min-w-0">
@@ -272,7 +272,7 @@ function filterAndRender() {
           ${trainer.foto_perfil?.url ? `<img src="http://13.62.216.127:1337${trainer.foto_perfil.url}" alt="${trainer.nombre}" class="w-full h-full object-cover" />` : ''}
         </div>
         <div class="absolute bottom-2 right-2">
-          <span class="px-2 py-1 rounded bg-black/60 backdrop-blur-sm text-xs font-bold">★ ${trainer.valoracion || '4.8'}</span>
+          <span class="valoracion px-2 py-1 rounded bg-black/60 backdrop-blur-sm text-xs font-bold">★ ${trainer.valoracion}</span>
         </div>
         <div class="flex-1 min-w-0">
           <div class="flex items-start justify-between mb-2">
