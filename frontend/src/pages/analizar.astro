@@ -159,6 +159,16 @@ const faqsTecnicos = dataFaqsTecnicos?.data || [];
           </div>
         </div>
 
+        <!-- MEDIAPIPE SECTION -->
+        <div id="seccionMediaPipe" class="hidden glass-surface rounded-2xl p-8 mb-8 border border-purple-500/20">
+          <div class="flex items-center gap-3 mb-6">
+            <i class="fa-solid fa-bone text-purple-400 text-xl"></i>
+            <h3 class="text-2xl font-bold">Datos Biomecánicos <span class="text-purple-400">MediaPipe</span></h3>
+            <span class="px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 text-xs font-bold">PRO</span>
+          </div>
+          <div id="mpContenido"></div>
+        </div>
+
         <!-- BOTONES ACCIÓN -->
         <div class="flex gap-4">
           <button id="nuevoAnalisisBtn" class="flex-1 px-8 py-4 rounded-lg glass-surface font-semibold hover:bg-white/10 transition">
@@ -348,7 +358,7 @@ const faqsTecnicos = dataFaqsTecnicos?.data || [];
   formData.append('ejercicio', ejercicio);
   formData.append('start_time', Math.floor(startTime));
   formData.append('end_time', Math.floor(endTime));
-
+  formData.append('user_tier', userTier); // MEDIAPIPE -> envía el plan al backend
   uploadSection.classList.add('hidden');
   loadingSection.classList.remove('hidden');
 
@@ -387,6 +397,7 @@ console.log('RESPUESTA BACKEND:', JSON.stringify(data));
 
     if (data.success) {
       mostrarResultado(data.msg);
+      mostrarMediaPipe(data.metricas || null); // MEDIAPIPE -> muestra tarjetas si hay métricas
       resultadoSection.classList.remove('hidden');
       resultadoSection.scrollIntoView({ behavior: 'smooth' });
     } else {
@@ -428,18 +439,87 @@ function mostrarResultado(texto) {
   const seccionCorreccion = texto.match(/🛠️.*/s)?.[0] || '';
 
   document.getElementById('recomendacionesLista').innerHTML = `
-  <div class="text-gray-300 leading-relaxed">${markdownToHtml(seccionBien + '\n\n' + seccionErrores + '\n\n' + seccionCausas + '\n\n' + seccionCorreccion)}</div>
-`;
+    <div class="text-gray-300 leading-relaxed">${markdownToHtml(seccionBien + '\n\n' + seccionErrores + '\n\n' + seccionCausas + '\n\n' + seccionCorreccion)}</div>
+  `;
 
   // Contar errores y advertencias reales del texto
-const numErrores = (texto.match(/❌/g) || []).length;
-const numAdvertencias = (texto.match(/⚠️/g) || []).length;
-const numBien = (texto.match(/✅/g) || []).length || 4;
+  const numErrores = (texto.match(/❌/g) || []).length;
+  const numAdvertencias = (texto.match(/⚠️/g) || []).length;
+  const numBien = (texto.match(/✅/g) || []).length || 4;
 
-document.getElementById('puntosCorrectos').textContent = numBien;
-document.getElementById('puntosAdvertencia').textContent = numAdvertencias;
-document.getElementById('puntosError').textContent = numErrores;
+  document.getElementById('puntosCorrectos').textContent = numBien;
+  document.getElementById('puntosAdvertencia').textContent = numAdvertencias;
+  document.getElementById('puntosError').textContent = numErrores;
 }
+
+  // ==========================================
+  // MEDIAPIPE -> muestra tarjetas PRO o bloqueo Premium
+  // ==========================================
+  function mostrarMediaPipe(metricas) {
+    const seccion = document.getElementById('seccionMediaPipe');
+    seccion.classList.remove('hidden');
+
+    if (userTier === 'pro' && metricas) {
+      const rompe = metricas.rompe_paralelo ? '<span class="text-green-400">✓ Sí</span>' : '<span class="text-red-400">✗ No</span>';
+      const valgo = metricas.valgo_detectado ? '<span class="text-red-400">⚠ Detectado</span>' : '<span class="text-green-400">✓ No detectado</span>';
+      document.getElementById('mpContenido').innerHTML = `
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="text-center p-4 rounded-xl bg-white/5 border border-purple-500/20">
+            <div class="text-xs text-gray-400 mb-1">Rodilla Izq. (mín)</div>
+            <div class="text-2xl font-black text-purple-400">${metricas.angulo_rodilla_izq_min}°</div>
+          </div>
+          <div class="text-center p-4 rounded-xl bg-white/5 border border-purple-500/20">
+            <div class="text-xs text-gray-400 mb-1">Rodilla Der. (mín)</div>
+            <div class="text-2xl font-black text-purple-400">${metricas.angulo_rodilla_der_min}°</div>
+          </div>
+          <div class="text-center p-4 rounded-xl bg-white/5 border border-purple-500/20">
+            <div class="text-xs text-gray-400 mb-1">Simetría</div>
+            <div class="text-2xl font-black text-purple-400">${metricas.simetria_pct}%</div>
+          </div>
+          <div class="text-center p-4 rounded-xl bg-white/5 border border-purple-500/20">
+            <div class="text-xs text-gray-400 mb-1">Profundidad</div>
+            <div class="text-2xl font-black text-purple-400">${metricas.profundidad_media}°</div>
+          </div>
+          <div class="text-center p-4 rounded-xl bg-white/5 border border-purple-500/20">
+            <div class="text-xs text-gray-400 mb-1">Rompe paralelo</div>
+            <div class="text-lg font-bold mt-1">${rompe}</div>
+          </div>
+          <div class="text-center p-4 rounded-xl bg-white/5 border border-purple-500/20">
+            <div class="text-xs text-gray-400 mb-1">Valgo rodilla</div>
+            <div class="text-lg font-bold mt-1">${valgo}</div>
+          </div>
+          <div class="text-center p-4 rounded-xl bg-white/5 border border-purple-500/20">
+            <div class="text-xs text-gray-400 mb-1">Tempo bajada</div>
+            <div class="text-2xl font-black text-purple-400">${metricas.tempo_excentrico_seg}s</div>
+          </div>
+          <div class="text-center p-4 rounded-xl bg-white/5 border border-purple-500/20">
+            <div class="text-xs text-gray-400 mb-1">Tempo subida</div>
+            <div class="text-2xl font-black text-purple-400">${metricas.tempo_concentrico_seg}s</div>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-4 text-center">Basado en ${metricas.frames_analizados} frames analizados por MediaPipe</p>
+      `;
+    } else {
+      document.getElementById('mpContenido').innerHTML = `
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 opacity-40 pointer-events-none select-none blur-sm">
+          ${['Rodilla Izq.','Rodilla Der.','Simetría','Profundidad','Paralelo','Valgo','Tempo ↓','Tempo ↑'].map(label => `
+            <div class="text-center p-4 rounded-xl bg-white/5 border border-purple-500/20">
+              <div class="text-xs text-gray-400 mb-1">${label}</div>
+              <div class="text-2xl font-black text-purple-400">—</div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="text-center">
+          <i class="fa-solid fa-lock text-yellow-400 text-3xl mb-3"></i>
+          <p class="text-white font-bold mb-1">Datos biomecánicos exactos</p>
+          <p class="text-gray-400 text-sm mb-4">Ángulos reales, simetría y tempo calculados con MediaPipe. Disponible en <span class="text-yellow-400 font-bold">Plan PRO</span>.</p>
+          <a href="/planes" class="inline-block px-6 py-3 rounded-lg bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white font-bold hover:scale-105 transition-transform text-sm">
+            Actualizar a PRO
+          </a>
+        </div>
+      `;
+    }
+  }
 
   
 

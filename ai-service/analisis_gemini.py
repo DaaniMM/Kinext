@@ -49,7 +49,7 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
                 # response devuelve un objeto con muchos "metadatos" --> .text es el que contiene el analisis en texto del ejercicio
         # Finalmente, si el bloque try falla, se lanza la Exception
 
-async def analizarGemini(video_path: str, ejercicio: str, start_time: int, end_time: int):
+async def analizarGemini(video_path: str, ejercicio: str, start_time: int, end_time: int, metricas_mediapipe: dict = None): # MEDIAPIPE -> acepta métricas opcionales para enriquecer el prompt
     model = genai.GenerativeModel("gemini-2.5-flash") # Inicializar el modelo -> GenerativeModel crea una instancia con el modelo ia seleccionado
     try:
         #1
@@ -60,8 +60,26 @@ async def analizarGemini(video_path: str, ejercicio: str, start_time: int, end_t
             return {"success": False, "msg":"Error, ejercicio no encontrado"}
         
         #3
-        prompt_final = (f"""{prompt} IMPORTANTE: El usuario ha marcado que el ejercicio ocurre entre el segundo {start_time} y el segundo {end_time}. Céntrate solo en ese intervalo.""")
+            # MEDIAPIPE -> si hay métricas, se añaden al prompt para que Gemini cite datos reales en su análisis
+        contexto_mp = ""
+        if metricas_mediapipe:
+            m = metricas_mediapipe
+            profundidad_texto = "SÍ rompió el paralelo" if m.get("rompe_paralelo") else "NO rompió el paralelo"
+            valgo_texto = "SÍ se detectó valgo" if m.get("valgo_detectado") else "No se detectó valgo significativo"
+            contexto_mp = f"""
+                ⚙️ DATOS BIOMECÁNICOS REALES (MediaPipe - 33 puntos articulares):
+                - Ángulo rodilla izquierda (mínimo): {m.get('angulo_rodilla_izq_min')}°
+                - Ángulo rodilla derecha (mínimo): {m.get('angulo_rodilla_der_min')}°
+                - Profundidad media: {m.get('profundidad_media')}° → {profundidad_texto}
+                - Ángulo cadera izquierda (mínimo): {m.get('angulo_cadera_izq_min')}°
+                - Ángulo cadera derecha (mínimo): {m.get('angulo_cadera_der_min')}°
+                - Simetría bilateral: {m.get('simetria_pct')}% (diferencia: {m.get('diferencia_rodillas_deg')}°)
+                - Valgo de rodilla: {valgo_texto}
+                - Tempo bajada: {m.get('tempo_excentrico_seg')}s | Tempo subida: {m.get('tempo_concentrico_seg')}s
+                INSTRUCCIÓN: Cita estos datos exactos en tu análisis. Suena clínico y preciso, no genérico.
+                ---"""
 
+        prompt_final = (f"""{contexto_mp}{prompt} IMPORTANTE: El usuario ha marcado que el ejercicio ocurre entre el segundo {start_time} y el segundo {end_time}. Céntrate solo en ese intervalo.""")
         #4
         video = genai.upload_file(path=video_path)
 

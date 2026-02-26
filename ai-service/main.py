@@ -18,6 +18,10 @@ import httpx
 from pydantic import BaseModel
 from analisis_gemini import analizarGemini
 
+#Importar mediapipe para detectar puntos en las articulaciones del video que sube el usuario
+from analisis_mediapipe import analizarMediaPipe 
+
+
 
 # Crear la app
 app = FastAPI()
@@ -54,7 +58,7 @@ def home():
     # 4 Cuando la ia ha dado la respuesta, o cuando se produce error en la ejecución, si existe la ruta -> eliminamos el archivo temporal que tenga el "id"(ruta) para liberar espacio
 
 @app.post("/analizar_video")
-async def analizar_video(video: UploadFile = File(...), ejercicio: str = Form(...), start_time: int = Form(...), end_time: int = Form(...)):
+async def analizar_video(video: UploadFile = File(...), ejercicio: str = Form(...), start_time: int = Form(...), end_time: int = Form(...), user_tier: str = Form(default="premium")): # MEDIAPIPE -> plan del usuario (pro activa mediapipe)
     ruta_video_temporal = None
     try:
         #1
@@ -73,8 +77,18 @@ async def analizar_video(video: UploadFile = File(...), ejercicio: str = Form(..
         video_temporal.close()
         ruta_video_temporal = video_temporal.name
 
+        # MEDIAPIPE -> si el usuario es PRO, extrae métricas biomecánicas reales antes de llamar a Gemini
+        metricas_mediapipe = None
+        if user_tier == "pro":
+            mp_result = await analizarMediaPipe(ruta_video_temporal, ejercicio, start_time, end_time)
+            if mp_result.get("success"):
+                metricas_mediapipe = mp_result["metricas"]
+
         #3
-        response = await analizarGemini(ruta_video_temporal, ejercicio, start_time, end_time)
+        response = await analizarGemini(ruta_video_temporal, ejercicio, start_time, end_time, metricas_mediapipe) # MEDIAPIPE -> pasa métricas si existen
+
+        if metricas_mediapipe: # MEDIAPIPE -> añade métricas al response para que el front las muestre
+            response["metricas"] = metricas_mediapipe
 
         return response
 
