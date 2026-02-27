@@ -226,7 +226,7 @@ const ejercicios = dataEjercicios?.data || [];
       const peso = (item.querySelector('.input-peso') as HTMLInputElement).value;
       if (reps) {
         series.push({
-          numero_serie: i + 1,
+          numero_series: i + 1,
           repeticiones: parseInt(reps),
           peso: parseFloat(peso) || 0,
           ejercicio_id: ejercicioId
@@ -326,7 +326,7 @@ console.log('Usuario:', user);
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ data: {
-              numero_serie: serie.numero_serie,
+              numero_series: serie.numero_series,
               repeticiones: serie.repeticiones,
               peso: serie.peso,
               ejercicio: serie.ejercicio_id,

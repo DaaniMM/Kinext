@@ -156,7 +156,7 @@ import Layout from '../layouts/Layout.astro';
   async function loadData(user: any) {
     try {
       // Cargar entrenos
-      const entrenosRes = await fetch(`${STRAPI}/api/registro-entrenamientos?filters[usuario][documentId][$eq]=${user.documentId}&populate[entreno_series]=true&sort=createdAt:desc&pagination[limit]=5`);
+      const entrenosRes = await fetch(`${STRAPI}/api/registro-entrenamientos?filters[usuario][documentId][$eq]=${user.documentId}&populate[entreno_series][populate][ejercicio]=true&sort=createdAt:desc&pagination[limit]=5`);
       const entrenosData = await entrenosRes.json();
       const entrenos = entrenosData.data || [];
 
@@ -172,18 +172,29 @@ import Layout from '../layouts/Layout.astro';
         document.getElementById('entrenos-lista')!.innerHTML = entrenos.map((e: any) => {
           const fecha = new Date(e.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
           const series = e.entreno_series?.length || 0;
+          const seriesHtml = (e.entreno_series || []).map((s: any) => `
+            <div class="flex justify-between text-xs text-gray-400 py-1 border-b border-white/5">
+              <span>${s.ejercicio?.nombre || 'Ejercicio'}</span>
+              <span>${s.numero_series}ª · ${s.repeticiones} reps · ${s.peso}kg</span>
+            </div>
+          `).join('');
           return `
-            <div class="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-[var(--color-secondary)]/20 flex items-center justify-center">
-                  <i class="fa-solid fa-dumbbell text-[var(--color-secondary)] text-sm"></i>
+            <div class="p-4 rounded-xl bg-white/5 hover:bg-white/10 transition cursor-pointer" onclick="this.querySelector('.detalle-entreno').classList.toggle('hidden')">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-[var(--color-secondary)]/20 flex items-center justify-center">
+                    <i class="fa-solid fa-dumbbell text-[var(--color-secondary)] text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="text-white text-sm font-semibold">${fecha}</p>
+                    <p class="text-xs text-gray-500">${series} series · ${formatDuracion(e.duracion || 0)}</p>
+                  </div>
                 </div>
-                <div>
-                  <p class="text-white text-sm font-semibold">${fecha}</p>
-                  <p class="text-xs ">${series} series · ${formatDuracion(e.duracion || 0)}</p>
-                </div>
+                ${e.notas ? `<p class="text-xs text-gray-500 max-w-32 truncate">${e.notas}</p>` : ''}
               </div>
-              ${e.notas ? `<p class="text-xs max-w-32 truncate">${e.notas}</p>` : ''}
+              <div class="detalle-entreno hidden mt-3 border-t border-white/10 pt-3">
+                ${seriesHtml || '<p class="text-xs text-gray-500">Sin series registradas</p>'}
+              </div>
             </div>
           `;
         }).join('');
