@@ -82,6 +82,12 @@
       "relation": "oneToMany",
       "target": "api::analisis.analisis",
       "mappedBy": "ejercicio"
+    },
+    "entreno_series": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::entreno-serie.entreno-serie",
+      "mappedBy": "ejercicio"
     }
   }
 }

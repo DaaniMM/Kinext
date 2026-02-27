@@ -359,6 +359,8 @@ const faqsTecnicos = dataFaqsTecnicos?.data || [];
   formData.append('start_time', Math.floor(startTime));
   formData.append('end_time', Math.floor(endTime));
   formData.append('user_tier', userTier); // MEDIAPIPE -> envía el plan al backend
+  const userId = JSON.parse(localStorage.getItem('kinext_user'))?.id || 0;
+  formData.append('user_id', userId);
   uploadSection.classList.add('hidden');
   loadingSection.classList.remove('hidden');
 

@@ -17,6 +17,8 @@ import os
 import httpx 
 from pydantic import BaseModel
 from analisis_gemini import analizarGemini
+import re
+from datetime import datetime
 
 #Importar mediapipe para detectar puntos en las articulaciones del video que sube el usuario
 from analisis_mediapipe import analizarMediaPipe 
@@ -58,7 +60,7 @@ def home():
     # 4 Cuando la ia ha dado la respuesta, o cuando se produce error en la ejecución, si existe la ruta -> eliminamos el archivo temporal que tenga el "id"(ruta) para liberar espacio
 
 @app.post("/analizar_video")
-async def analizar_video(video: UploadFile = File(...), ejercicio: str = Form(...), start_time: int = Form(...), end_time: int = Form(...), user_tier: str = Form(default="premium")): # MEDIAPIPE -> plan del usuario (pro activa mediapipe)
+async def analizar_video(video: UploadFile = File(...), ejercicio: str = Form(...), start_time: int = Form(...), end_time: int = Form(...), user_tier: str = Form(default="premium"), user_id: int = Form(default=0)): # MEDIAPIPE -> plan del usuario (pro activa mediapipe)
     ruta_video_temporal = None
     try:
         #1
@@ -79,16 +81,46 @@ async def analizar_video(video: UploadFile = File(...), ejercicio: str = Form(..
 
         # MEDIAPIPE -> si el usuario es PRO, extrae métricas biomecánicas reales antes de llamar a Gemini
         metricas_mediapipe = None
+        print(f"DEBUG user_tier={user_tier}", flush=True)
         if user_tier == "pro":
             mp_result = await analizarMediaPipe(ruta_video_temporal, ejercicio, start_time, end_time)
             if mp_result.get("success"):
                 metricas_mediapipe = mp_result["metricas"]
+            print(f"DEBUG MP result: {mp_result}", flush=True)
 
         #3
         response = await analizarGemini(ruta_video_temporal, ejercicio, start_time, end_time, metricas_mediapipe) # MEDIAPIPE -> pasa métricas si existen
 
         if metricas_mediapipe: # MEDIAPIPE -> añade métricas al response para que el front las muestre
             response["metricas"] = metricas_mediapipe
+	# HISTORIAL -> guarda el análisis en Strapi
+        try:
+            import httpx
+            strapi_token = os.getenv("STRAPI_TOKEN")
+            strapi_url = os.getenv("STRAPI_URL", "http://localhost:1337")
+            puntuacion_match = re.search(r'Puntuaci[oó]n:\s*([\d.]+)/10', response.get("msg", ""))
+            puntuacion = round(float(puntuacion_match.group(1)) * 10) if puntuacion_match else 0
+            payload = {
+                "data": {
+                    "resultado_ia": response.get("msg", ""),
+                    "puntuacion": puntuacion,
+                    "ejercicio_nombre": ejercicio,
+                    "fecha": datetime.now().strftime("%Y-%m-%d"),
+                    "usuario": user_id,
+                    "metricas_json": metricas_mediapipe
+                }
+            }
+            async with httpx.AsyncClient() as client:
+                await client.post(
+                    f"{strapi_url}/api/analises",
+                    json=payload,
+                    headers={"Authorization": f"Bearer {strapi_token}"},
+                    timeout=10
+                )
+        except Exception as e:
+            print(f"Error guardando en Strapi: {e}", flush=True)
+            import traceback
+            traceback.print_exc()
 
         return response
 

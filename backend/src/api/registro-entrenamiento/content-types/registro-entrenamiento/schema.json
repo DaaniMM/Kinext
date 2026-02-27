@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "registro_entrenamientos",
+  "info": {
+    "singularName": "registro-entrenamiento",
+    "pluralName": "registro-entrenamientos",
+    "displayName": "Entreno"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "notas": {
+      "type": "text"
+    },
+    "usuario": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::usuario.usuario",
+      "inversedBy": "entrenos"
+    },
+    "duracion": {
+      "type": "integer"
+    },
+    "entreno_series": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::entreno-serie.entreno-serie",
+      "mappedBy": "entreno"
+    }
+  }
+}

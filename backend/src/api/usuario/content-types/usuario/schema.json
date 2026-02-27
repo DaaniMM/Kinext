@@ -16,6 +16,45 @@
       "relation": "oneToMany",
       "target": "api::analisis.analisis",
       "mappedBy": "usuario"
+    },
+    "nombre": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "regex": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d@$!%*?&]{8,}$"
+    },
+    "plan": {
+      "type": "enumeration",
+      "required": true,
+      "default": "free",
+      "enum": [
+        "free",
+        "premium",
+        "pro"
+      ]
+    },
+    "foto_perfil": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
+    },
+    "entrenos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::registro-entrenamiento.registro-entrenamiento",
+      "mappedBy": "usuario"
     }
   }
 }

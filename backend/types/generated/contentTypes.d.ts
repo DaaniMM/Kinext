@@ -448,6 +448,7 @@ export interface ApiAnalisisAnalisis extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::ejercicio.ejercicio'
     >;
+    ejercicio_nombre: Schema.Attribute.String;
     fecha: Schema.Attribute.Date & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -455,23 +456,24 @@ export interface ApiAnalisisAnalisis extends Struct.CollectionTypeSchema {
       'api::analisis.analisis'
     > &
       Schema.Attribute.Private;
+    metricas_json: Schema.Attribute.JSON;
     publishedAt: Schema.Attribute.DateTime;
     puntuacion: Schema.Attribute.Decimal &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMax<
         {
-          max: 10;
+          max: 100;
           min: 0;
         },
         number
       >;
     resultado_ia: Schema.Attribute.Text & Schema.Attribute.Required;
+    resumen: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     usuario: Schema.Attribute.Relation<'manyToOne', 'api::usuario.usuario'>;
-    video_usuario: Schema.Attribute.Media<'files' | 'videos'> &
-      Schema.Attribute.Required;
+    video_usuario: Schema.Attribute.Media<'files' | 'videos'>;
   };
 }
 
@@ -532,6 +534,46 @@ export interface ApiArticuloArticulo extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiConfiguracionSitioConfiguracionSitio
+  extends Struct.SingleTypeSchema {
+  collectionName: 'configuracion_sitios';
+  info: {
+    displayName: 'ConfiguracionSitio';
+    pluralName: 'configuracion-sitios';
+    singularName: 'configuracion-sitio';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    color_acento: Schema.Attribute.String;
+    color_primario: Schema.Attribute.String;
+    color_secundario: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    direccion: Schema.Attribute.String;
+    email_contacto: Schema.Attribute.String;
+    facebook_url: Schema.Attribute.String;
+    instagram_url: Schema.Attribute.String;
+    linkedin_url: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::configuracion-sitio.configuracion-sitio'
+    > &
+      Schema.Attribute.Private;
+    meta_description: Schema.Attribute.Text;
+    nombre_app: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    tagline: Schema.Attribute.String;
+    telefono_contacto: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiEjercicioEjercicio extends Struct.CollectionTypeSchema {
   collectionName: 'ejercicios';
   info: {
@@ -575,6 +617,10 @@ export interface ApiEjercicioEjercicio extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Required;
     descripcion: Schema.Attribute.RichText & Schema.Attribute.Required;
+    entreno_series: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::entreno-serie.entreno-serie'
+    >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -755,6 +801,105 @@ export interface ApiEntrenadorEntrenador extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiEntrenoSerieEntrenoSerie
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'entreno_series';
+  info: {
+    displayName: 'Entreno_serie';
+    pluralName: 'entreno-series';
+    singularName: 'entreno-serie';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    ejercicio: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::ejercicio.ejercicio'
+    >;
+    entreno: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::registro-entrenamiento.registro-entrenamiento'
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::entreno-serie.entreno-serie'
+    > &
+      Schema.Attribute.Private;
+    numero_series: Schema.Attribute.Integer & Schema.Attribute.Required;
+    peso: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    repeticiones: Schema.Attribute.Integer & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
+  collectionName: 'faqs';
+  info: {
+    displayName: 'Faq';
+    pluralName: 'faqs';
+    singularName: 'faq';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    categoria: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    destacada: Schema.Attribute.Boolean;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::faq.faq'> &
+      Schema.Attribute.Private;
+    orden: Schema.Attribute.Integer;
+    pregunta: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    respuesta: Schema.Attribute.Text;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiHomeHome extends Struct.SingleTypeSchema {
+  collectionName: 'homes';
+  info: {
+    displayName: 'Home';
+    pluralName: 'homes';
+    singularName: 'home';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    beneficios: Schema.Attribute.Component<'home.beneficio', true>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    estadisticas: Schema.Attribute.Component<'home.estadistica', true>;
+    hero_cta_texto: Schema.Attribute.String;
+    hero_subtitulo: Schema.Attribute.String;
+    hero_titulo: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::home.home'> &
+      Schema.Attribute.Private;
+    pasos: Schema.Attribute.Component<'home.paso', true>;
+    publishedAt: Schema.Attribute.DateTime;
+    seccion_como_funciona_titulo: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiMailMail extends Struct.CollectionTypeSchema {
   collectionName: 'mails';
   info: {
@@ -783,6 +928,80 @@ export interface ApiMailMail extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPlanPlan extends Struct.CollectionTypeSchema {
+  collectionName: 'plans';
+  info: {
+    displayName: 'Plan';
+    pluralName: 'plans';
+    singularName: 'plan';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    caracteristica: Schema.Attribute.Component<
+      'plan.caracteristica-plan',
+      true
+    >;
+    color_badge: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    descripcion_corta: Schema.Attribute.String;
+    descripcion_larga: Schema.Attribute.Text;
+    destacado: Schema.Attribute.Boolean;
+    limite_analisis_dia: Schema.Attribute.Integer;
+    limite_analisis_mes: Schema.Attribute.Integer;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::plan.plan'> &
+      Schema.Attribute.Private;
+    nombre: Schema.Attribute.String;
+    orden: Schema.Attribute.Integer;
+    precio_anual: Schema.Attribute.Decimal;
+    precio_mensual: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiRegistroEntrenamientoRegistroEntrenamiento
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'registro_entrenamientos';
+  info: {
+    displayName: 'Entreno';
+    pluralName: 'registro-entrenamientos';
+    singularName: 'registro-entrenamiento';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    duracion: Schema.Attribute.Integer;
+    entreno_series: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::entreno-serie.entreno-serie'
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::registro-entrenamiento.registro-entrenamiento'
+    > &
+      Schema.Attribute.Private;
+    notas: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    usuario: Schema.Attribute.Relation<'manyToOne', 'api::usuario.usuario'>;
   };
 }
 
@@ -829,6 +1048,74 @@ export interface ApiResenaResena extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiTablaComparativaTablaComparativa
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'tabla_comparativas';
+  info: {
+    displayName: 'TablaComparativa';
+    pluralName: 'tabla-comparativas';
+    singularName: 'tabla-comparativa';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    feature: Schema.Attribute.String;
+    free: Schema.Attribute.Boolean;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::tabla-comparativa.tabla-comparativa'
+    > &
+      Schema.Attribute.Private;
+    orden: Schema.Attribute.Integer;
+    premium: Schema.Attribute.Boolean;
+    pro: Schema.Attribute.Boolean;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTestimonioTestimonio extends Struct.CollectionTypeSchema {
+  collectionName: 'testimonios';
+  info: {
+    displayName: 'Testimonio';
+    pluralName: 'testimonios';
+    singularName: 'testimonio';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    autor_ciudad: Schema.Attribute.String;
+    autor_nombre: Schema.Attribute.String;
+    autor_rol: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    destacado: Schema.Attribute.Boolean;
+    fecha: Schema.Attribute.Date;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::testimonio.testimonio'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    puntuacion: Schema.Attribute.Integer;
+    texto: Schema.Attribute.Text;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    verificado: Schema.Attribute.Boolean;
+  };
+}
+
 export interface ApiUsuarioUsuario extends Struct.CollectionTypeSchema {
   collectionName: 'usuarios';
   info: {
@@ -844,12 +1131,27 @@ export interface ApiUsuarioUsuario extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    email: Schema.Attribute.Email &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    entrenos: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::registro-entrenamiento.registro-entrenamiento'
+    >;
+    foto_perfil: Schema.Attribute.Media<'images' | 'files'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::usuario.usuario'
     > &
       Schema.Attribute.Private;
+    nombre: Schema.Attribute.String & Schema.Attribute.Required;
+    password: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    plan: Schema.Attribute.Enumeration<['free', 'premium', 'pro']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'free'>;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1370,10 +1672,18 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::analisis.analisis': ApiAnalisisAnalisis;
       'api::articulo.articulo': ApiArticuloArticulo;
+      'api::configuracion-sitio.configuracion-sitio': ApiConfiguracionSitioConfiguracionSitio;
       'api::ejercicio.ejercicio': ApiEjercicioEjercicio;
       'api::entrenador.entrenador': ApiEntrenadorEntrenador;
+      'api::entreno-serie.entreno-serie': ApiEntrenoSerieEntrenoSerie;
+      'api::faq.faq': ApiFaqFaq;
+      'api::home.home': ApiHomeHome;
       'api::mail.mail': ApiMailMail;
+      'api::plan.plan': ApiPlanPlan;
+      'api::registro-entrenamiento.registro-entrenamiento': ApiRegistroEntrenamientoRegistroEntrenamiento;
       'api::resena.resena': ApiResenaResena;
+      'api::tabla-comparativa.tabla-comparativa': ApiTablaComparativaTablaComparativa;
+      'api::testimonio.testimonio': ApiTestimonioTestimonio;
       'api::usuario.usuario': ApiUsuarioUsuario;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

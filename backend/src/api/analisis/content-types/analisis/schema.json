@@ -26,7 +26,7 @@
     "video_usuario": {
       "type": "media",
       "multiple": false,
-      "required": true,
+      "required": false,
       "allowedTypes": [
         "files",
         "videos"
@@ -40,10 +40,20 @@
       "type": "decimal",
       "required": true,
       "min": 0,
-      "max": 10
+      "max": 100
     },
     "fecha": {
       "type": "date",
+      "required": true
+    },
+    "ejercicio_nombre": {
+      "type": "string"
+    },
+    "metricas_json": {
+      "type": "json"
+    },
+    "resumen": {
+      "type": "string",
       "required": true
     }
   }

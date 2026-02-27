@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "entreno_series",
+  "info": {
+    "singularName": "entreno-serie",
+    "pluralName": "entreno-series",
+    "displayName": "Entreno_serie"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "numero_series": {
+      "type": "integer",
+      "required": true
+    },
+    "repeticiones": {
+      "type": "integer",
+      "required": true
+    },
+    "peso": {
+      "type": "decimal",
+      "required": true
+    },
+    "ejercicio": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::ejercicio.ejercicio",
+      "inversedBy": "entreno_series"
+    },
+    "entreno": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::registro-entrenamiento.registro-entrenamiento",
+      "inversedBy": "entreno_series"
+    }
+  }
+}
