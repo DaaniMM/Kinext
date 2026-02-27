@@ -79,7 +79,7 @@ async def analizarGemini(video_path: str, ejercicio: str, start_time: int, end_t
                 INSTRUCCIÓN: Cita estos datos exactos en tu análisis. Suena clínico y preciso, no genérico.
                 ---"""
 
-        prompt_final = (f"""{contexto_mp}{prompt} IMPORTANTE: El usuario ha marcado que el ejercicio ocurre entre el segundo {start_time} y el segundo {end_time}. Céntrate solo en ese intervalo.""")
+        prompt_final = (f"""{contexto_mp}{prompt} IMPORTANTE: El usuario ha marcado que el ejercicio ocurre entre el segundo {start_time} y el segundo {end_time}. Céntrate solo en ese intervalo. AL FINAL DE TU RESPUESTA, añade exactamente esta línea separadora y un resumen: ###RESUMEN### [2-3 frases máximo resumiendo los puntos clave del análisis, sin markdown, sin emojis]""")
         #4
         video = genai.upload_file(path=video_path)
 
@@ -98,7 +98,10 @@ async def analizarGemini(video_path: str, ejercicio: str, start_time: int, end_t
         genai.delete_file(video.name)
 
         #8
-        return{"success": True, "msg":response.text}
+        partes = response.text.split("###RESUMEN###")
+        msg = partes[0].strip()
+        resumen = partes[1].strip() if len(partes) > 1 else ""
+        return{"success": True, "msg": msg, "resumen": resumen}
     
     except Exception as e:
         return {"success": False, "msg":str(e)}

@@ -103,6 +103,7 @@ async def analizar_video(video: UploadFile = File(...), ejercicio: str = Form(..
             payload = {
                 "data": {
                     "resultado_ia": response.get("msg", ""),
+                    "resumen": response.get("resumen", ""),
                     "puntuacion": puntuacion,
                     "ejercicio_nombre": ejercicio,
                     "fecha": datetime.now().strftime("%Y-%m-%d"),
