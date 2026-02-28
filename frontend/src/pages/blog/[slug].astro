@@ -36,10 +36,12 @@ function markdownToHtml(texto: string): string {
 }
 
 const contenidoHtml = markdownToHtml(articulo.contenido || '');
+const palabras = (articulo.contenido || "").trim().split(/\s+/).length;
+const tiempoLectura = Math.max(1, Math.ceil(palabras / 200));
 const fechaFormateada = new Date(articulo.publishedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
 ---
 
-<Layout title={`${articulo.titulo} - KINEXT Blog`}>
+<Layout title={`${articulo.titulo} - KINEXT Blog`} description={articulo.extracto || "Artículo de blog sobre fitness y biomecánica en KINEXT."}>
 
   <!-- HERO ARTÍCULO -->
   <section class="pt-24 pb-12 px-6 relative overflow-hidden">
@@ -84,6 +86,8 @@ const fechaFormateada = new Date(articulo.publishedAt).toLocaleDateString('es-ES
         </div>
         <span>·</span>
         <span>{fechaFormateada}</span>
+        <span>·</span>
+        <span>{tiempoLectura} min de lectura</span>
       </div>
     </div>
   </section>

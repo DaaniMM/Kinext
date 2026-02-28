@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 
-const { title = 'KINEXT' } = Astro.props;
+const { title = "KINEXT", description = "Plataforma de análisis biomecánico con IA, entrenadores personales y seguimiento de entrenamientos." } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -12,7 +12,8 @@ const { title = 'KINEXT' } = Astro.props;
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google-site-verification" content="Sys8W_ezMXkPVX1LGsIGYeLmja69fpJWeRRNSK-Dsfo" />
-  <title>{title}</title> 
+  <title>{title}</title>
+  <meta name="description" content={description} /> 
   <link rel="icon" type="image/png" href="/images/KINEXT_darklogo.png" />
   <!-- Fuentes Google -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
