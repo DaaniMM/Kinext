@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 
 // Fetch Trainers desde Strapi
-const resTrainers = await fetch('http://13.62.216.127:1337/api/entrenadores?populate=*');
+const resTrainers = await fetch('https://kinext.es/api/entrenadores?populate=*');
 const dataTrainers = await resTrainers.json();
 const trainers = dataTrainers.data || [];
 console.log('TRAINER 1:', JSON.stringify(trainers[0], null, 2));
@@ -129,7 +129,7 @@ console.log('TRAINER 1:', JSON.stringify(trainers[0], null, 2));
       <div class="tilt-card trainer-card glass-surface rounded-xl overflow-hidden border border-white/10 cursor-pointer hover:border-[var(--color-primary)]/30 transition-all" data-trainer-id="${trainer.id}">
         <div class="flex gap-4 p-4 relative">
           <div style="height: 200px;" class="rounded-lg bg-gray-900 flex-shrink-0 overflow-hidden relative">
-            ${trainer.foto_perfil?.url ? `<img src="http://13.62.216.127:1337${trainer.foto_perfil.url}" alt="${trainer.nombre}" class="w-full h-full object-cover" />` : ''}
+            ${trainer.foto_perfil?.url ? `<img src="https://kinext.es${trainer.foto_perfil.url}" alt="${trainer.nombre}" class="w-full h-full object-cover" />` : ''}
           </div>
           <div class="absolute bottom-2 right-2">
             <span class="px-2 py-1 rounded bg-black/60 backdrop-blur-sm text-xs font-bold">★ ${calcularMedia(trainer.resenas)}</span>
@@ -173,7 +173,7 @@ console.log('TRAINER 1:', JSON.stringify(trainers[0], null, 2));
     modalContent.innerHTML = `
       <div class="p-6">
         <div class="flex gap-6 mb-6 mt-2">
-          <img src="http://13.62.216.127:1337${trainer.foto_perfil.url}" alt="${trainer.nombre}" class="w-40 h-48 rounded-lg object-cover flex-shrink-0" />
+          <img src="https://kinext.es${trainer.foto_perfil.url}" alt="${trainer.nombre}" class="w-40 h-48 rounded-lg object-cover flex-shrink-0" />
           <div class="flex-1">
             <h2 class="text-3xl font-bold mb-2">${trainer.nombre}</h2>
             <p class="text-gray-400 mb-4">${trainer.ciudad} • ${trainer.experiencia_anos} años exp.</p>
@@ -246,7 +246,8 @@ console.log('TRAINER 1:', JSON.stringify(trainers[0], null, 2));
     const sortVal = sortFilter.value;
 
     filteredGlobal = trainers.filter(t => {
-      const matchName = t.nombre.toLowerCase().includes(searchVal);
+      const searchRegex = new RegExp(searchVal, "i");
+      const matchName = searchRegex.test(t.nombre);
       const matchCity = cityVal === '' || t.ciudad === cityVal;
       const matchSpecialty = specialtyVal === '' || (t.especialidad && t.especialidad.includes(specialtyVal));
       return matchName && matchCity && matchSpecialty;

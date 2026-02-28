@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-const STRAPI = "http://13.62.216.127:1337";
+const STRAPI = "https://kinext.es";
 
 let config = {};
 let faqs = [];
@@ -208,33 +208,56 @@ const redes = [
     });
   });
 
-  // Form
+  // Form - Validación con regex (desesctructuracion)
+  const PATTERNS = {
+    nombre: /^[a-zA-ZÀ-ÿ\s]{2,50}$/,
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    mensaje: /^.{10,1000}$/
+  };
+  const { nombre: pNombre, email: pEmail, mensaje: pMensaje } = PATTERNS;
+
+  function validarCampo(input: HTMLInputElement | HTMLTextAreaElement, pattern: RegExp) {
+    const ok = pattern.test(input.value.trim());
+    input.style.borderColor = ok ? 'var(--color-primary)' : '#ef4444';
+    return ok;
+  }
+
   const form = document.getElementById('formContacto') as HTMLFormElement;
   const btnEnviar = document.getElementById('btnEnviar') as HTMLButtonElement;
   const mensajeExito = document.getElementById('mensajeExito');
   const mensajeError = document.getElementById('mensajeError');
 
+  const inputNombre = document.getElementById('nombre') as HTMLInputElement;
+  const inputEmail = document.getElementById('email') as HTMLInputElement;
+  const inputMensaje = document.getElementById('mensaje') as HTMLTextAreaElement;
+
+  inputNombre.addEventListener('input', () => validarCampo(inputNombre, pNombre));
+  inputEmail.addEventListener('input', () => validarCampo(inputEmail, pEmail));
+  inputMensaje.addEventListener('input', () => validarCampo(inputMensaje, pMensaje));
+
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const nombre = (document.getElementById('nombre') as HTMLInputElement).value;
-    const email = (document.getElementById('email') as HTMLInputElement).value;
-    const asunto = (document.getElementById('asunto') as HTMLSelectElement).value;
-    const mensaje = (document.getElementById('mensaje') as HTMLTextAreaElement).value;
+    const okNombre = validarCampo(inputNombre, pNombre);
+    const okEmail = validarCampo(inputEmail, pEmail);
+    const okMensaje = validarCampo(inputMensaje, pMensaje);
+    if (!okNombre || !okEmail || !okMensaje) return;
 
+    const asunto = (document.getElementById('asunto') as HTMLSelectElement).value;
     btnEnviar.disabled = true;
     btnEnviar.textContent = 'Enviando...';
     mensajeExito?.classList.add('hidden');
     mensajeError?.classList.add('hidden');
 
     try {
-      const res = await fetch('http://13.62.216.127:8000/contacto', {
+      const res = await fetch('https://kinext.es/ai/contacto', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, email, asunto, mensaje })
+        body: JSON.stringify({ nombre: inputNombre.value, email: inputEmail.value, asunto, mensaje: inputMensaje.value })
       });
       if (res.ok) {
         mensajeExito?.classList.remove('hidden');
         form.reset();
+        [inputNombre, inputEmail, inputMensaje].forEach(i => i.style.borderColor = '');
       } else {
         mensajeError?.classList.remove('hidden');
       }
@@ -245,4 +268,4 @@ const redes = [
       btnEnviar.textContent = 'Enviar mensaje';
     }
   });
-</script>
+  </script>

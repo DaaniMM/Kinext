@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-const STRAPI = "http://13.62.216.127:1337";
+const STRAPI = "https://kinext.es";
 const resEjercicios = await fetch(`${STRAPI}/api/ejercicios?sort=nombre:asc&pagination[limit]=100`);
 const dataEjercicios = await resEjercicios.json();
 const ejercicios = dataEjercicios?.data || [];
@@ -135,7 +135,7 @@ const ejercicios = dataEjercicios?.data || [];
 </Layout>
 
 <script>
-  const STRAPI = 'http://13.62.216.127:1337';
+  const STRAPI = 'https://kinext.es';
 
   // Verificar sesión
   const raw = localStorage.getItem('kinext_user');

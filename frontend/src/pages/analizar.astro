@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 
 // Fetch FAQs Técnicos
-const resFaqsTecnicos = await fetch('http://13.62.216.127:1337/api/faqs?filters[categoria][$eq]=tecnico&populate=*');
+const resFaqsTecnicos = await fetch('https://kinext.es/api/faqs?filters[categoria][$eq]=tecnico&populate=*');
 const dataFaqsTecnicos = await resFaqsTecnicos.json();
 const faqsTecnicos = dataFaqsTecnicos?.data || [];
 ---
@@ -382,7 +382,7 @@ const faqsTecnicos = dataFaqsTecnicos?.data || [];
   }, 4000);
 
   try {
-    const response = await fetch('http://13.62.216.127:8000/analizar_video', {
+    const response = await fetch('https://kinext.es/ai/analizar_video', {
       method: 'POST',
       body: formData
     });

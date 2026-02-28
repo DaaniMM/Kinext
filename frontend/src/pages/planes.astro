@@ -1,15 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-const resPlanes = await fetch('http://13.62.216.127:1337/api/plans?populate=*&sort=orden:asc');
+const resPlanes = await fetch('https://kinext.es/api/plans?populate=*&sort=orden:asc');
 const dataPlanes = await resPlanes.json();
 const planes = dataPlanes?.data || [];
 
-const resTabla = await fetch('http://13.62.216.127:1337/api/tabla-comparativas?sort=orden:asc');
+const resTabla = await fetch('https://kinext.es/api/tabla-comparativas?sort=orden:asc');
 const dataTabla = await resTabla.json();
 const tablaFilas = dataTabla?.data || [];
 
-const resFaqs = await fetch('http://13.62.216.127:1337/api/faqs?filters[categoria][$eq]=precios&populate=*');
+const resFaqs = await fetch('https://kinext.es/api/faqs?filters[categoria][$eq]=precios&populate=*');
 const dataFaqs = await resFaqs.json();
 const faqs = dataFaqs?.data || [];
 ---

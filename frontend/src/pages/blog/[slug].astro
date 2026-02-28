@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 
 export async function getStaticPaths() {
-  const res = await fetch('http://13.62.216.127:1337/api/articulos?populate=*&pagination[limit]=100');
+  const res = await fetch('https://kinext.es/api/articulos?populate=*&pagination[limit]=100');
   const data = await res.json();
   const articulos = data?.data || [];
 
@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 const { articulo } = Astro.props;
 
 // Artículos relacionados (misma categoría, excluyendo el actual)
-const resRelacionados = await fetch(`http://13.62.216.127:1337/api/articulos?populate=*&pagination[limit]=3`);
+const resRelacionados = await fetch(`https://kinext.es/api/articulos?populate=*&pagination[limit]=3`);
 const dataRelacionados = await resRelacionados.json();
 const relacionados = (dataRelacionados?.data || [])
   .filter((a: any) => a.slug !== articulo.slug)
@@ -93,7 +93,7 @@ const fechaFormateada = new Date(articulo.publishedAt).toLocaleDateString('es-ES
     <section class="px-6 mb-12">
       <div class="max-w-4xl mx-auto">
         <img
-          src={`http://13.62.216.127:1337${articulo.imagen_portada.url}`}
+          src={`https://kinext.es${articulo.imagen_portada.url}`}
           alt={articulo.titulo}
           class="w-full rounded-2xl object-cover max-h-[500px]"
         />
@@ -123,7 +123,7 @@ const fechaFormateada = new Date(articulo.publishedAt).toLocaleDateString('es-ES
               {rel.imagen_portada?.url && (
                 <div class="h-44 overflow-hidden">
                   <img
-                    src={`http://13.62.216.127:1337${rel.imagen_portada.url}`}
+                    src={`https://kinext.es${rel.imagen_portada.url}`}
                     alt={rel.titulo}
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />

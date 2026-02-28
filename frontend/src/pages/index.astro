@@ -2,17 +2,17 @@
 import Layout from '../layouts/Layout.astro';
 
 // Fetch Testimonios
-const resTestimonios = await fetch('http://13.62.216.127:1337/api/testimonios?populate=*');
+const resTestimonios = await fetch('https://kinext.es/api/testimonios?populate=*');
 const dataTestimonios = await resTestimonios.json();
 const testimonios = dataTestimonios?.data || [];
 
 // Fetch FAQs
-const resFaqs = await fetch('http://13.62.216.127:1337/api/faqs?filters[categoria][$eq]=general&populate=*');
+const resFaqs = await fetch('https://kinext.es/api/faqs?filters[categoria][$eq]=general&populate=*');
 const dataFaqs = await resFaqs.json();
 const faqs = dataFaqs?.data || [];
 
 // Fetch Blogs
-const resBlogs = await fetch('http://13.62.216.127:1337/api/articulos?populate=*&sort=publishedAt:desc&pagination[limit]=3');
+const resBlogs = await fetch('https://kinext.es/api/articulos?populate=*&sort=publishedAt:desc&pagination[limit]=3');
 const dataBlogs = await resBlogs.json();
 const blogs = dataBlogs?.data || [];
 ---
@@ -216,7 +216,7 @@ const blogs = dataBlogs?.data || [];
       <article class="glass-surface rounded-2xl overflow-hidden hover:scale-105 transition-transform">
         {blog.imagen_portada?.url && (
           <img
-            src={`http://13.62.216.127:1337${blog.imagen_portada.url}`}
+            src={`https://kinext.es${blog.imagen_portada.url}`}
             alt={blog.titulo}
             class="h-48 w-full object-cover"
           />
@@ -387,7 +387,7 @@ const blogs = dataBlogs?.data || [];
     blogs.map(blog => (
       <article class="glass-surface rounded-2xl overflow-hidden hover:scale-105 transition-transform">
         {blog.imagen_portada?.url && (
-          <img src={`http://13.62.216.127:1337${blog.imagen_portada.url}`} alt={blog.titulo} class="h-48 w-full object-cover"/>
+          <img src={`https://kinext.es${blog.imagen_portada.url}`} alt={blog.titulo} class="h-48 w-full object-cover"/>
         )}
         <div class="p-6">
           <span class="text-xs text-gray-400">

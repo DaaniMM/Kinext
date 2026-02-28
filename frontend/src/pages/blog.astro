@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-const resBlogs = await fetch('http://13.62.216.127:1337/api/articulos?populate=*&sort=publishedAt:desc&pagination[limit]=100');
+const resBlogs = await fetch('https://kinext.es/api/articulos?populate=*&sort=publishedAt:desc&pagination[limit]=100');
 const dataBlogs = await resBlogs.json();
 const blogs = dataBlogs?.data || [];
 
@@ -63,7 +63,7 @@ const todasCategorias = ['Todos', ...new Set(blogs.flatMap((b: any) => b.categor
             {blog.imagen_portada?.url ? (
               <div class="relative overflow-hidden h-52">
                 <img
-                  src={`http://13.62.216.127:1337${blog.imagen_portada.url}`}
+                  src={`https://kinext.es${blog.imagen_portada.url}`}
                   alt={blog.titulo}
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />

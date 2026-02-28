@@ -114,7 +114,7 @@ import Layout from '../layouts/Layout.astro';
 </Layout>
 
 <script>
-  const STRAPI = 'http://13.62.216.127:1337';
+  const STRAPI = 'https://kinext.es';
 
   // Verificar sesión
   const raw = localStorage.getItem('kinext_user');
@@ -133,7 +133,7 @@ import Layout from '../layouts/Layout.astro';
 
     // Avatar
     if (user.foto_perfil) {
-      document.getElementById('avatar-container')!.innerHTML = `<img src="http://13.62.216.127:1337${user.foto_perfil}" class="w-full h-full object-cover" />`;
+      document.getElementById('avatar-container')!.innerHTML = `<img src="https://kinext.es${user.foto_perfil}" class="w-full h-full object-cover" />`;
     }
 
     // Badge plan
