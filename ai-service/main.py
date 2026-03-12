@@ -158,34 +158,5 @@ async def guardar_contacto(data: ContactoSchema):
         else:
             raise HTTPException(status_code=500, detail="Error guardando en Strapi")
 
-
-
-class ContactoSchema(BaseModel):
-    nombre: str
-    email: str
-    asunto: str
-    mensaje: str
-
-@app.post("/contacto")
-async def guardar_contacto(data: ContactoSchema):
-    strapi_url = "http://localhost:1337/api/mails"
-    payload = {
-        "data": {
-            "nombre": data.nombre,
-            "email": data.email,
-            "asunto": data.asunto,
-            "mensaje": data.mensaje,
-            "leido": False
-        }
-    }
-    async with httpx.AsyncClient() as client:
-        res = await client.post(strapi_url, json=payload)
-        if res.status_code in [200, 201]:
-            return {"ok": True}
-        else:
-            raise HTTPException(status_code=500, detail="Error guardando en Strapi")
-
-
-
 # http://127.0.0.1:8000
 #Docs: http://127.0.0.1:8000/docs

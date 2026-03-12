@@ -10,7 +10,7 @@ import math
 
 mp_pose = mp.solutions.pose
 
-
+#recibe 3 puntos por ej: rodilla, cadera, tobillo -> mediante vectores y operaciones matematicas calcula el angulo que forman en el punto medio de las 3
 def calcular_angulo(a, b, c):
     """Calcula el ángulo en el punto B formado por los vectores BA y BC"""
     a = np.array(a)
@@ -26,63 +26,64 @@ def calcular_angulo(a, b, c):
     return round(angulo, 1)
 
 
-def get_coords(landmarks, idx, w, h):
+def get_coords(landmarks, idx, w, h): #convierte coordenadas en px
     """Devuelve coordenadas en píxeles de un landmark"""
     lm = landmarks[idx]
     return [lm.x * w, lm.y * h]
 
 
+#la funcion que se le pasa a main si el usuario es PRO -> recibe el video y los slider star-end
 async def analizarMediaPipe(video_path: str, ejercicio: str, start_time: int, end_time: int):
     """
     Analiza el vídeo con MediaPipe y devuelve métricas biomecánicas.
     Retorna dict con ángulos, simetría y tempo.
     """
     try:
-        cap = cv2.VideoCapture(video_path)
-        fps = cap.get(cv2.CAP_PROP_FPS) or 30
-        w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        cap = cv2.VideoCapture(video_path)         #obtiene el video y lo lee
+        fps = cap.get(cv2.CAP_PROP_FPS) or 30       #guarda los frames por segundo del video, el ancho y el alto del video
+        w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))    
         h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-        frame_start = int(start_time * fps)
+        frame_start = int(start_time * fps)      #guarda el frame en el que empieza y acaba el video
         frame_end = int(end_time * fps)
 
-        # Datos acumulados por frame
+        # Arrays vacios para almacenar posteriormente los datos del analisis mediapipe
         angulos_rodilla_izq = []
         angulos_rodilla_der = []
         angulos_cadera_izq = []
         angulos_cadera_der = []
-        alturas_cadera = []  # Para detectar tempo (bajada/subida)
+        alturas_cadera = []  
 
-        pose = mp_pose.Pose(
-            static_image_mode=False,
-            model_complexity=1,
-            min_detection_confidence=0.5,
-            min_tracking_confidence=0.5
+        pose = mp_pose.Pose(              #crea el detector de pose
+            static_image_mode=False,       #indica que No es una imagen estatica (es un video)
+            model_complexity=1,              #nivel de precision 1 (del 0 al 2 -> equilibrio entre precision y velocidad)
+            min_detection_confidence=0.5,    #solo detecta nueva pose si esta seguro al 50% minimo
+            min_tracking_confidence=0.5     #solo detecta cambios de pose de un frame a otro si esta seguto al 50% minimo
         )
 
         frame_idx = 0
         cap.set(cv2.CAP_PROP_POS_FRAMES, frame_start)
 
-        while cap.isOpened():
+        while cap.isOpened():    #mientras que el video está abierto, lee cada frame hasta llegar a frame final
             ret, frame = cap.read()
             if not ret:
                 break
 
             current_frame = frame_start + frame_idx
-            if current_frame > frame_end:
+            if current_frame > frame_end:  #si frame actual es > frame final -> se acabó el video = salir
                 break
 
             frame_idx += 1
 
-            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            results = pose.process(rgb)
+            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)   #mediapipe requiere que cada frase se pase a rgb
+            results = pose.process(rgb)                    #guarda en results la pose en ese frame o sino hace continue (salta el frame)
 
             if not results.pose_landmarks:
                 continue
 
-            lm = results.pose_landmarks.landmark
+            lm = results.pose_landmarks.landmark    #guarda en lm el resultado de analizar cada pose (50% seguro) en cada frame -> guarda por defecto informacion de 33 puntos articulares del cuerpo
 
-            # Landmarks clave
+            # Landmarks clave -> usa el analisis de poses anterior para obtener la posicion de cada parte del cuerpo que queremos analizar
             # Izquierda
             cadera_izq = get_coords(lm, mp_pose.PoseLandmark.LEFT_HIP, w, h)
             rodilla_izq = get_coords(lm, mp_pose.PoseLandmark.LEFT_KNEE, w, h)
@@ -95,7 +96,7 @@ async def analizarMediaPipe(video_path: str, ejercicio: str, start_time: int, en
             tobillo_der = get_coords(lm, mp_pose.PoseLandmark.RIGHT_ANKLE, w, h)
             hombro_der = get_coords(lm, mp_pose.PoseLandmark.RIGHT_SHOULDER, w, h)
 
-            # Calcular ángulos
+            # Calcular ángulos  --> con la funcion del principio, mediante vectores calcula los angulos de cada parte del cuerpo
             ang_rod_izq = calcular_angulo(cadera_izq, rodilla_izq, tobillo_izq)
             ang_rod_der = calcular_angulo(cadera_der, rodilla_der, tobillo_der)
             ang_cad_izq = calcular_angulo(hombro_izq, cadera_izq, rodilla_izq)
@@ -111,10 +112,11 @@ async def analizarMediaPipe(video_path: str, ejercicio: str, start_time: int, en
             alturas_cadera.append(altura_cadera)
 
         cap.release()
-        pose.close()
+        pose.close()   #cierra el video y el analisis de pose porque ya ha terminado
 
         if not angulos_rodilla_izq:
             return {"success": False, "msg": "MediaPipe no detectó pose en el vídeo"}
+
 
         # --- MÉTRICAS CALCULADAS ---
 
@@ -150,7 +152,7 @@ async def analizarMediaPipe(video_path: str, ejercicio: str, start_time: int, en
             tempo_excentrico = round(frames_bajada / fps, 1)
             tempo_concentrico = round(frames_subida / fps, 1)
 
-        metricas = {
+        metricas = {        #finalmente guarda todos los datos --> devuelve el objeto metricas que se le pasa a main.py (response en linea 92)
             "angulo_rodilla_izq_min": min_rod_izq,
             "angulo_rodilla_der_min": min_rod_der,
             "angulo_cadera_izq_min": min_cad_izq,
