@@ -44,3 +44,6 @@ backend/export_*.tar.gz.enc
 
 # PEM / private keys
 *.pem
+
+# Legacy / unused prototypes
+ai-service/analisis_claude.py
