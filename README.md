@@ -18,6 +18,28 @@ This project was built as an academic MVP, focusing on architecture, integration
 
 ---
 
+## Screenshots
+
+### Landing / Hero Section
+
+![KINEXT Landing Hero Section](docs/screenshots/landing_page-hero_section.png)
+
+### Video Upload Flow
+
+![KINEXT Video Upload](docs/screenshots/video_upload.png)
+
+### AI Analysis
+
+![KINEXT AI Analysis](docs/screenshots/ai_analysis.png)
+
+### Trainer Marketplace
+
+![KINEXT Trainer Marketplace](docs/screenshots/marketplace.png)
+
+### User Profile
+
+![KINEXT User Profile](docs/screenshots/profile.png)
+
 ## Main Features
 
 - AI-assisted video analysis for exercise technique feedback.
