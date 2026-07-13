@@ -1,5 +1,7 @@
 # KINEXT
 
+_**Academic MVP:** This project was developed during my Web Application Development studies as an AI-assisted full-stack prototype. My role focused on defining the product idea, guiding the implementation, integrating the main pieces, testing the application and documenting the technical architecture._
+
 All-in-one fitness platform MVP combining AI-assisted exercise analysis, biomechanical metrics, workout tracking and a personal trainer marketplace.
 
 > **Project status:** KINEXT was developed as an academic MVP during my Web Application Development studies. It was deployed on an AWS EC2 instance for testing and classroom presentation, but the live server is currently offline because the EC2 instance was removed after the demo to keep cloud resources available for other projects.
